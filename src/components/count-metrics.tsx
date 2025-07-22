@@ -1,8 +1,8 @@
 "use client";
 
 import { normalizeZero, type IoMetrics } from "@/lib/metrics";
-import * as React from "react"
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Area, CartesianGrid, ComposedChart, Line, XAxis } from "recharts";
+import * as React from "react";
 
 import {
   Card,
@@ -10,62 +10,78 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-
+} from "@/components/ui/chart";
+import { Currency } from "@/types/currency";
+import { MonetaryValue } from "./monetary-value";
 
 const chartConfig = {
   tx: {
-  in: {
-    label: "Payouts",
-  },
-  out: {
-    label: "Purchases",
-    color: "var(--chart-5)",
-  },
-  total: {
-    label: "Total",
-    color: "var(--chart-1)",
-  },
+    in: {
+      label: "Payouts",
+      color: "var(--chart-1)",
+    },
+    out: {
+      label: "Purchases",
+      color: "var(--chart-5)",
+    },
+    total: {
+      label: "Total",
+    },
+    cumulativeTotal: {
+      label: "Current Transactions",
+    },
   } satisfies ChartConfig,
-  net: {in: {
-    label: "Minted",
-  },
-  out: {
-    label: "Destroyed",
-    color: "var(--chart-5)",
-  },
-  total: {
-    label: "Volume",
-    color: "var(--chart-1)",
-  },
-} satisfies ChartConfig}
+  net: {
+    in: {
+      label: "Minted",
+      color: "var(--chart-1)",
+    },
+    out: {
+      label: "Destroyed",
+      color: "var(--chart-5)",
+    },
+    total: {
+      label: "Volume",
+    },
+    cumulativeTotal: {
+      label: "Current Supply",
+    },
+  } satisfies ChartConfig,
+};
 
-const chartLabels = { tx: "Transaction", net: "Net" };
+const chartLabels = { tx: "Transactions", net: "Held shells (Net)" };
+const currencies = { tx: null, net: "shells" } satisfies Record<string, Currency | null>;
 
-export function CountMetrics({ net, transaction }: { net: IoMetrics, transaction: IoMetrics }) {
+export function CountMetrics({
+  currency,
+  net,
+  transaction,
+}: {
+  currency: Currency,
+  net: IoMetrics;
+  transaction: IoMetrics;
+}) {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("net");
 
   const chartData = {
-    net: normalizeZero(net), tx: normalizeZero(transaction)
+    net: normalizeZero(net),
+    tx: normalizeZero(transaction),
   };
 
-  const total = React.useMemo(
-    () => ({
-      net: net.reduce((acc, curr) => acc + curr.total, 0),
-      tx: transaction.reduce((acc, curr) => acc + curr.total, 0),
-    }),
-    [net, transaction]
-  );
+  const total = {
+    net: net.at(-1)!.cumulativeTotal,
+    tx: transaction.at(-1)!.cumulativeTotal,
+  };
 
   return (
-    <Card className="py-0">
+    <Card className="py-0 grow">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
           <CardTitle>Market I/O</CardTitle>
@@ -88,24 +104,24 @@ export function CountMetrics({ net, transaction }: { net: IoMetrics, transaction
                   {chartLabels[chart]}
                 </span>
                 <span className="text-lg leading-none font-bold sm:text-3xl">
-                  {total[chart].toLocaleString()}
+                  {currencies[chart] ? <MonetaryValue value={total[chart]} currency={currencies[chart]} show={currency}/> : total[chart].toLocaleString()}
                 </span>
               </button>
-            )
+            );
           })}
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
         <ChartContainer config={chartConfig[activeChart]}>
-          <AreaChart
+          <ComposedChart
             accessibilityLayer
+            stackOffset="expand"
             data={chartData[activeChart]}
             margin={{
               left: 12,
               right: 12,
               top: 12,
             }}
-            stackOffset="expand"
           >
             <CartesianGrid vertical={false} />
             <XAxis
@@ -113,7 +129,8 @@ export function CountMetrics({ net, transaction }: { net: IoMetrics, transaction
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.toLocaleDateString("en-US", {
+              tickFormatter={(value) =>
+                value.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                 })
@@ -130,6 +147,7 @@ export function CountMetrics({ net, transaction }: { net: IoMetrics, transaction
               fillOpacity={0.4}
               stroke="var(--chart-2)"
               stackId="a"
+              yAxisId="a"
             />
             <Area
               dataKey="out"
@@ -138,15 +156,29 @@ export function CountMetrics({ net, transaction }: { net: IoMetrics, transaction
               fillOpacity={0.3}
               stroke="var(--chart-5)"
               stackId="a"
+              yAxisId="a"
             />
-            <Area
+            <Line
               dataKey="total"
+              //type="monotone"
+              //strokeWidth={2}
+              yAxisId="b"
               opacity={0}
-              stackId="invisible"
+              dot={false}
+              fillOpacity={0}
+              strokeOpacity={0}
+              fill="none"
+              stroke="none"
             />
-         </AreaChart>
+            <Line
+              type="monotone"
+              dataKey="cumulativeTotal"
+              strokeWidth={2}
+              dot={false}
+            />
+          </ComposedChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

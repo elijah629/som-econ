@@ -1,17 +1,25 @@
 import { Leaderboard } from "./explorpheus";
 
 export interface Metrics {
-  net: IoMetrics,
-  transaction: IoMetrics
+  net: IoMetrics;
+  transaction: IoMetrics;
+  lorenz: LorenzMetrics;
+  gini: number;
 }
 
+export type LorenzMetrics = {
+  population: number;
+  wealth: number;
+}[];
+
 export type IoMetrics = {
-  in: number,
-  out: number,
+  in: number;
+  out: number;
 
-  total: number, // in - out
+  total: number; // in - out
+  cumulativeTotal: number;
 
-  date: Date
+  date: Date;
 }[];
 
 export function normalizeZero(io: IoMetrics): IoMetrics {
@@ -29,25 +37,54 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
 
 export function calculateMetrics(leaderboard: Leaderboard): Metrics {
   const { net, transaction } = calculateCounts(leaderboard, 1); // good since SoM is small
+  const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
+  const gini = calculateGini(lorenz);
 
-  return { net, transaction };
+  return { net, transaction, lorenz, gini };
+}
+
+// Note: data must be sorted by balance high to low for this to work
+function calculateLorenz(
+  leaderboard: Leaderboard,
+  totalShells: number,
+): LorenzMetrics {
+  const lorenzMetrics = [];
+  let cumulativeShells = 0;
+
+  for (let i = 0; i < leaderboard.length; i++) {
+    const user = leaderboard[leaderboard.length - i - 1].shells;
+    cumulativeShells += user;
+
+    const population = ((i + 1) / leaderboard.length) * 100;
+    const wealth = (cumulativeShells / totalShells) * 100;
+
+    lorenzMetrics.push({
+      population,
+      wealth,
+    });
+  }
+
+  return lorenzMetrics;
 }
 
 function calculateCounts(
   leaderboard: Leaderboard,
-  rangeInDays: number
+  rangeInDays: number,
 ): { net: IoMetrics; transaction: IoMetrics } {
-  const netMap = new Map<string, { in: number; out: number; date: Date }>();
-  const txMap = new Map<string, { in: number; out: number; date: Date }>();
+  const netMap = new Map<number, { in: number; out: number; date: Date }>();
+  const txMap = new Map<number, { in: number; out: number; date: Date }>();
 
   for (const entry of leaderboard) {
     for (const payout of entry.payouts) {
       const date = payout.createdAt;
       const bucketStart = getBucketStart(date, rangeInDays);
-      const bucketKey = bucketStart.toISOString();
+      const bucketKey = bucketStart.getTime();
 
-      // Net aggregation
-      const netEntry = netMap.get(bucketKey) ?? { in: 0, out: 0, date: bucketStart };
+      const netEntry = netMap.get(bucketKey) ?? {
+        in: 0,
+        out: 0,
+        date: bucketStart,
+      };
       const txEntry = txMap.get(bucketKey) ?? {
         in: 0,
         out: 0,
@@ -67,28 +104,55 @@ function calculateCounts(
     }
   }
 
-  const net: IoMetrics = Array.from(netMap.values()).map((entry) => ({
-    ...entry,
-    total: entry.in - entry.out,
-  }));
+  const buildWithCumulativeTotal = <T extends { date: Date; total: number }>(
+    items: T[],
+  ): (T & { cumulativeTotal: number })[] => {
+    return items
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .map(
+        ((cumulative) => (item) => {
+          cumulative += item.total;
+          return { ...item, cumulativeTotal: cumulative };
+        })(0),
+      );
+  };
 
-  console.log(net);
-
-  const transaction: IoMetrics = Array.from(txMap.values()).map(
-    (entry) => ({
+  const net = buildWithCumulativeTotal(
+    Array.from(netMap.values()).map((entry) => ({
       ...entry,
-      total: entry.in + entry.out,
-    })
+      total: entry.in - entry.out,
+    })),
   );
 
-  net.sort((a, b) => a.date.getTime() - b.date.getTime());
-  transaction.sort((a, b) => a.date.getTime() - b.date.getTime());
+  const transaction = buildWithCumulativeTotal(
+    Array.from(txMap.values()).map((entry) => ({
+      ...entry,
+      total: entry.in + entry.out,
+    })),
+  );
 
   return { net, transaction };
 }
 
+function calculateGini(lorenzData: LorenzMetrics): number {
+  let areaUnderCurve = 0;
+
+  for (let i = 1; i < lorenzData.length; i++) {
+    const x1 = lorenzData[i - 1].population / 100;
+    const x2 = lorenzData[i].population / 100;
+    const y1 = lorenzData[i - 1].wealth / 100;
+    const y2 = lorenzData[i].wealth / 100;
+
+    const trapezoidArea = ((x2 - x1) * (y1 + y2)) / 2;
+    areaUnderCurve += trapezoidArea;
+  }
+
+  return 1 - 2 * areaUnderCurve;
+}
+
 function getBucketStart(date: Date, rangeInDays: number): Date {
   const time = date.getTime();
-  const bucketTime = Math.floor(time / (rangeInDays * 86400000)) * (rangeInDays * 86400000);
+  const bucketTime =
+    Math.floor(time / (rangeInDays * 86400000)) * (rangeInDays * 86400000);
   return new Date(bucketTime);
 }
