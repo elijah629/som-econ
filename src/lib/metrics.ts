@@ -12,8 +12,8 @@ export interface Metrics {
 }
 
 export type ShopMetrics = {
-  name: string,
-  purchases: number
+  name: string;
+  purchases: number;
 }[];
 
 export type LorenzMetrics = {
@@ -76,11 +76,10 @@ function calculateLorenz(
   return lorenzMetrics;
 }
 
-
 function calculateCounts(
   leaderboard: Leaderboard,
   rangeInDays: number,
-): { net: IoMetrics; transaction: IoMetrics, shop: ShopMetrics } {
+): { net: IoMetrics; transaction: IoMetrics; shop: ShopMetrics } {
   const purchases = new Map<string, number>();
 
   const netMap = new Map<number, { in: number; out: number; date: Date }>();
@@ -111,9 +110,10 @@ function calculateCounts(
         txEntry.out += 1;
 
         const closest = findClosestItems(-payout.amount);
+        const increment = 1 / closest.length;
 
         for (const item of closest) {
-          purchases.set(item, (purchases.get(item) ?? 0) + 1);
+          purchases.set(item, (purchases.get(item) ?? 0) + increment);
         }
       }
 
@@ -149,7 +149,14 @@ function calculateCounts(
     })),
   );
 
-  return { net, transaction, shop: Array.from(purchases, ([name, purchases]) => ({ name, purchases })).sort((a, b) => b.purchases - a.purchases) };
+  return {
+    net,
+    transaction,
+    shop: Array.from(purchases, ([name, purchases]) => ({
+      name,
+      purchases,
+    })).sort((a, b) => b.purchases - a.purchases),
+  };
 }
 
 function calculateGini(lorenzData: LorenzMetrics): number {

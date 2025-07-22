@@ -38,7 +38,9 @@ export function LorenzMetrics({
     <Card className="grow">
       <CardHeader>
         <CardTitle>Wealth distribution</CardTitle>
-        <CardDescription>Lorenz chart of current wealth. Bottom X% controls Y% of wealth</CardDescription>
+        <CardDescription>
+          Lorenz chart of current wealth. Bottom X% controls Y% of wealth
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

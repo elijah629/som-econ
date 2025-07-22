@@ -1,13 +1,27 @@
 import { ShopMetrics } from "@/lib/metrics";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
 
 export function ShopLeaderboard({ shop }: { shop: ShopMetrics }) {
-  return  <Card>
+  return (
+    <Card>
       <CardHeader>
         <CardTitle>Shop Leaderboard</CardTitle>
         <CardDescription>
-        Approximated from prices and user spending behaviour
+          Approximated from prices and user spending behaviour
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -15,18 +29,19 @@ export function ShopLeaderboard({ shop }: { shop: ShopMetrics }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead className="text-right">Purchases</TableHead>
+              <TableHead className="text-right">Average assumed purchases</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {shop.map(({ name, purchases }) => (
               <TableRow key={name}>
-              <TableCell>{name}</TableCell>
-              <TableCell>{purchases}</TableCell>
+                <TableCell>{name}</TableCell>
+                <TableCell>{purchases}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </CardContent>
-    </Card> ;
+    </Card>
+  );
 }

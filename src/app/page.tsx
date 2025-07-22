@@ -16,7 +16,8 @@ export default async function Statistics({
     currency = "shells";
   }
 
-  const { net, transaction, lorenz, gini, shop } = calculateMetrics(leaderboard);
+  const { net, transaction, lorenz, gini, shop } =
+    calculateMetrics(leaderboard);
 
   return (
     <main className="p-8">
