@@ -20,6 +20,8 @@ import Image from "next/image";
 import { MonetaryValue } from "./monetary-value";
 import { Currency } from "@/types/currency";
 
+const AMOUNT = 12;
+
 export async function UserLeaderboard({
   leaderboard,
   currency,
@@ -29,12 +31,15 @@ export async function UserLeaderboard({
   currency: Currency;
   total: number;
 }) {
+  const top = leaderboard.slice(0, AMOUNT);
+  const ttop = top.reduce((a, b) => a + b.shells, 0);
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>
-          Top 10 out of {leaderboard.length} users with a non-zero balance
+          Top {AMOUNT} out of {leaderboard.length} users with a non-zero balance
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -48,7 +53,7 @@ export async function UserLeaderboard({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {leaderboard.slice(0, 10).map((user) => (
+            {top.map((user) => (
               <TableRow key={user.slackId}>
                 <LeaderboardUser
                   total={total}
@@ -58,6 +63,16 @@ export async function UserLeaderboard({
                 />
               </TableRow>
             ))}
+            <TableRow>
+            <TableCell/>
+            <TableCell/>
+              <TableCell>
+                <MonetaryValue value={ttop} currency="shells" show={currency}/>
+              </TableCell>
+            <TableCell className="text-right">
+                {(ttop * 100 / total).toFixed(2)}%
+            </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </CardContent>

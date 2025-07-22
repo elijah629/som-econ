@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -13,9 +13,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
+} from "@/components/ui/table";
+import { MonetaryValue } from "@/components/monetary-value";
+import { Currency } from "@/types/currency";
 
-export function ShopLeaderboard({ shop }: { shop: ShopMetrics }) {
+export function ShopLeaderboard({ shop, currency }: { shop: ShopMetrics, currency: Currency }) {
   return (
     <Card>
       <CardHeader>
@@ -29,16 +31,27 @@ export function ShopLeaderboard({ shop }: { shop: ShopMetrics }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead className="text-right">Average assumed purchases</TableHead>
+              <TableHead>Approx purchases</TableHead>
+              <TableHead className="text-right">
+                Value
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {shop.map(({ name, purchases }) => (
+            {shop.map(({ name, purchases, value }) => (
               <TableRow key={name}>
                 <TableCell>{name}</TableCell>
-                <TableCell>{purchases}</TableCell>
+                <TableCell>{Math.ceil(purchases)}</TableCell>
+                <TableCell>
+                  <MonetaryValue right value={value} mult={purchases} currency="shells" show={currency}/>
+                </TableCell>
               </TableRow>
             ))}
+            <TableRow>
+              <TableCell className="font-bold">Total</TableCell>
+              <TableCell>{Math.ceil(shop.reduce((a, b) => a + b.purchases, 0))}</TableCell>
+              <TableCell><MonetaryValue right value={shop.reduce((a, b) => a + (b.value * b.purchases), 0)} currency="shells" show={currency}/></TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </CardContent>

@@ -1,5 +1,5 @@
-import { Leaderboard } from "./explorpheus";
-import { findClosestItems } from "./shop";
+import { Leaderboard } from "@/lib/explorpheus";
+import { findClosestItems } from "@/lib/shop";
 
 export interface Metrics {
   net: IoMetrics;
@@ -14,6 +14,7 @@ export interface Metrics {
 export type ShopMetrics = {
   name: string;
   purchases: number;
+  value: number;
 }[];
 
 export type LorenzMetrics = {
@@ -80,7 +81,7 @@ function calculateCounts(
   leaderboard: Leaderboard,
   rangeInDays: number,
 ): { net: IoMetrics; transaction: IoMetrics; shop: ShopMetrics } {
-  const purchases = new Map<string, number>();
+  const purchases = new Map<string, [number, number]>();
 
   const netMap = new Map<number, { in: number; out: number; date: Date }>();
   const txMap = new Map<number, { in: number; out: number; date: Date }>();
@@ -110,10 +111,13 @@ function calculateCounts(
         txEntry.out += 1;
 
         const closest = findClosestItems(-payout.amount);
-        const increment = 1 / closest.length;
 
-        for (const item of closest) {
-          purchases.set(item, (purchases.get(item) ?? 0) + increment);
+        for (let i = 0; i < closest.length; i++) {
+          const item = closest[i];
+          const increment = 1 / (i + 1);
+          const previous = purchases.get(item) ?? [0, 0];
+
+          purchases.set(item, [previous[0] + increment, -payout.amount]);
         }
       }
 
@@ -152,9 +156,10 @@ function calculateCounts(
   return {
     net,
     transaction,
-    shop: Array.from(purchases, ([name, purchases]) => ({
+    shop: Array.from(purchases, ([name, [purchases, value]]) => ({
       name,
       purchases,
+      value
     })).sort((a, b) => b.purchases - a.purchases),
   };
 }

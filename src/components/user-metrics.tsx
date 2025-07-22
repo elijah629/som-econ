@@ -1,15 +1,18 @@
 import { LorenzMetrics } from "@/components/lorenz-metrics";
 import type { LorenzMetrics as LM, ShopMetrics } from "@/lib/metrics";
-import { ShopLeaderboard } from "./shop-leaderboard";
+import { ShopLeaderboard } from "@/components/shop-leaderboard";
+import { Currency } from "@/types/currency";
 
 export function UserMetrics({
   lorenz,
   gini,
+  currency,
   shop,
 }: {
   lorenz: LM;
   gini: number;
   shop: ShopMetrics;
+    currency: Currency
 }) {
   return (
     <>
@@ -17,7 +20,7 @@ export function UserMetrics({
 
       <div className="flex w-full flex-col xl:flex-row gap-8">
         <LorenzMetrics lorenz={lorenz} gini={gini} />
-        <ShopLeaderboard shop={shop} />
+        <ShopLeaderboard currency={currency} shop={shop} />
       </div>
     </>
   );

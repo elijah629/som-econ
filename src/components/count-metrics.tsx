@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/chart";
 import { Currency } from "@/types/currency";
 import { MonetaryValue } from "./monetary-value";
+import { Ticker } from "./ticker";
 
 const chartConfig = {
   tx: {
@@ -55,7 +56,7 @@ const chartConfig = {
   } satisfies ChartConfig,
 };
 
-const chartLabels = { tx: "Transactions", net: "Held shells (Net)" };
+const chartLabels = { tx: "Transactions", net: "Held (Net)" };
 const currencies = { tx: null, net: "shells" } satisfies Record<
   string,
   Currency | null
@@ -79,8 +80,8 @@ export function CountMetrics({
   };
 
   const total = {
-    net: net.at(-1)!.cumulativeTotal,
-    tx: transaction.at(-1)!.cumulativeTotal,
+    net: { curr: net.at(-1)!.cumulativeTotal, prev: net.at(-2)!.cumulativeTotal },
+    tx:  { curr: transaction.at(-1)!.cumulativeTotal, prev: transaction.at(-2)!.cumulativeTotal },
   };
 
   return (
@@ -100,22 +101,25 @@ export function CountMetrics({
               <button
                 key={chart}
                 data-active={activeChart === chart}
-                className="data-[active=true]:bg-muted/50 relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
+                className="data-[active=true]:bg-muted/50 relative cursor-pointer z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(chart)}
               >
                 <span className="text-muted-foreground text-xs">
                   {chartLabels[chart]}
                 </span>
-                <span className="text-lg leading-none font-bold sm:text-3xl">
+                <span className="text-lg leading-none items-center flex gap-2 font-bold sm:text-3xl">
                   {currencies[chart] ? (
+                    <span className="mr-7">
                     <MonetaryValue
-                      value={total[chart]}
+                      value={total[chart].curr}
                       currency={currencies[chart]}
                       show={currency}
                     />
+                    </span>
                   ) : (
-                    total[chart].toLocaleString()
+                    total[chart].curr.toLocaleString()
                   )}
+                  <Ticker value={(total[chart].curr - total[chart].prev) / total[chart].curr}/>
                 </span>
               </button>
             );
@@ -184,7 +188,7 @@ export function CountMetrics({
             <Line
               type="monotone"
               dataKey="cumulativeTotal"
-              strokeWidth={2}
+            strokeWidth={2}
               dot={false}
             />
           </ComposedChart>

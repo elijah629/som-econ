@@ -1,16 +1,21 @@
 import { convertCurrency, Currency } from "@/types/currency";
 import { Shell } from "./shell";
+import { cn } from "@/lib/utils";
 
 export function MonetaryValue({
   value,
   currency,
   show,
+  mult = 1,
+  right = false,
 }: {
   value: number;
   currency: Currency;
   show: Currency;
+  mult?: number,
+  right?: boolean
 }) {
-  const converted = convertCurrency(value, currency, show);
+  const converted = convertCurrency(value, currency, show) * mult;
   const formattedAmount =
     show === "USD" ? (
       converted.toLocaleString("en-US", {
@@ -23,5 +28,5 @@ export function MonetaryValue({
       </>
     );
 
-  return <span className="flex items-center gap-2">{formattedAmount}</span>;
+  return <span className={cn("flex items-center gap-2", right && "justify-end")}>{formattedAmount}</span>;
 }
