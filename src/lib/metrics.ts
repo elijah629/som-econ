@@ -1,11 +1,20 @@
 import { Leaderboard } from "./explorpheus";
+import { findClosestItems } from "./shop";
 
 export interface Metrics {
   net: IoMetrics;
   transaction: IoMetrics;
+
   lorenz: LorenzMetrics;
   gini: number;
+
+  shop: ShopMetrics;
 }
+
+export type ShopMetrics = {
+  name: string,
+  purchases: number
+}[];
 
 export type LorenzMetrics = {
   population: number;
@@ -36,11 +45,11 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
 }
 
 export function calculateMetrics(leaderboard: Leaderboard): Metrics {
-  const { net, transaction } = calculateCounts(leaderboard, 1); // good since SoM is small
+  const { net, transaction, shop } = calculateCounts(leaderboard, 1); // good since SoM is small
   const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
   const gini = calculateGini(lorenz);
 
-  return { net, transaction, lorenz, gini };
+  return { net, transaction, lorenz, gini, shop };
 }
 
 // Note: data must be sorted by balance high to low for this to work
@@ -67,10 +76,13 @@ function calculateLorenz(
   return lorenzMetrics;
 }
 
+
 function calculateCounts(
   leaderboard: Leaderboard,
   rangeInDays: number,
-): { net: IoMetrics; transaction: IoMetrics } {
+): { net: IoMetrics; transaction: IoMetrics, shop: ShopMetrics } {
+  const purchases = new Map<string, number>();
+
   const netMap = new Map<number, { in: number; out: number; date: Date }>();
   const txMap = new Map<number, { in: number; out: number; date: Date }>();
 
@@ -97,6 +109,12 @@ function calculateCounts(
       } else {
         netEntry.out -= payout.amount;
         txEntry.out += 1;
+
+        const closest = findClosestItems(-payout.amount);
+
+        for (const item of closest) {
+          purchases.set(item, (purchases.get(item) ?? 0) + 1);
+        }
       }
 
       netMap.set(bucketKey, netEntry);
@@ -131,7 +149,7 @@ function calculateCounts(
     })),
   );
 
-  return { net, transaction };
+  return { net, transaction, shop: Array.from(purchases, ([name, purchases]) => ({ name, purchases })).sort((a, b) => b.purchases - a.purchases) };
 }
 
 function calculateGini(lorenzData: LorenzMetrics): number {

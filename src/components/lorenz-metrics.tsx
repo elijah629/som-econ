@@ -19,11 +19,11 @@ import {
 import type { LorenzMetrics } from "@/lib/metrics";
 
 const chartConfig = {
-  wealth: {
-    label: "Wealth",
-  },
   population: {
-    label: "Population",
+    label: "Bottom % of Population",
+  },
+  wealth: {
+    label: "% of Total Wealth",
   },
 } satisfies ChartConfig;
 
@@ -35,10 +35,10 @@ export function LorenzMetrics({
   gini: number;
 }) {
   return (
-    <Card>
+    <Card className="grow">
       <CardHeader>
         <CardTitle>Wealth distribution</CardTitle>
-        <CardDescription>Lorenz chart of current wealth</CardDescription>
+        <CardDescription>Lorenz chart of current wealth. Bottom X% controls Y% of wealth</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

@@ -56,14 +56,17 @@ const chartConfig = {
 };
 
 const chartLabels = { tx: "Transactions", net: "Held shells (Net)" };
-const currencies = { tx: null, net: "shells" } satisfies Record<string, Currency | null>;
+const currencies = { tx: null, net: "shells" } satisfies Record<
+  string,
+  Currency | null
+>;
 
 export function CountMetrics({
   currency,
   net,
   transaction,
 }: {
-  currency: Currency,
+  currency: Currency;
   net: IoMetrics;
   transaction: IoMetrics;
 }) {
@@ -104,7 +107,15 @@ export function CountMetrics({
                   {chartLabels[chart]}
                 </span>
                 <span className="text-lg leading-none font-bold sm:text-3xl">
-                  {currencies[chart] ? <MonetaryValue value={total[chart]} currency={currencies[chart]} show={currency}/> : total[chart].toLocaleString()}
+                  {currencies[chart] ? (
+                    <MonetaryValue
+                      value={total[chart]}
+                      currency={currencies[chart]}
+                      show={currency}
+                    />
+                  ) : (
+                    total[chart].toLocaleString()
+                  )}
                 </span>
               </button>
             );

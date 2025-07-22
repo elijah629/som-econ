@@ -13,10 +13,10 @@ export default async function Statistics({
   let currency = (await searchParams).currency;
 
   if (currency !== "USD" && currency !== "shells") {
-    currency = "USD";
+    currency = "shells";
   }
 
-  const { net, transaction, lorenz, gini } = calculateMetrics(leaderboard);
+  const { net, transaction, lorenz, gini, shop } = calculateMetrics(leaderboard);
 
   return (
     <main className="p-8">
@@ -33,7 +33,7 @@ export default async function Statistics({
         net={net}
         transaction={transaction}
       />
-      <UserMetrics lorenz={lorenz} gini={gini} />
+      <UserMetrics shop={shop} lorenz={lorenz} gini={gini} />
     </main>
   );
 }

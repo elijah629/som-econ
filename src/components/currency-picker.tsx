@@ -25,14 +25,14 @@ export function CurrencyPicker({ value }: { value: Currency }) {
         className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
         aria-label="Select a currency"
       >
-        <SelectValue placeholder="USD" />
+        <SelectValue placeholder="shells" />
       </SelectTrigger>
       <SelectContent className="rounded-xl">
         <SelectItem value="USD" className="rounded-lg">
           USD 💵
         </SelectItem>
         <SelectItem value="shells" className="rounded-lg">
-          Shells <Shell size={24}/>
+          Shells <Shell size={16} />
         </SelectItem>
       </SelectContent>
     </Select>
