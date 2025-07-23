@@ -30,11 +30,11 @@ export interface SlackUserResponse {
 }
 
 export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
-  return await fetch(
+  const req1 = await fetch(
     "https://slack.com/api/users.profile.get?user=" + slackId,
     {
       next: {
-        revalidate: false
+        revalidate: false,
       },
       cache: "force-cache",
       headers: {
@@ -42,4 +42,26 @@ export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
       },
     },
   ).then((x) => x.json());
+
+  if (!req1.profile) {
+    await new Promise(r => setTimeout(r, 60_000)); // uhh yeah
+
+    const req2 = await fetch(
+    "https://slack.com/api/users.profile.get?user=" + slackId,
+    {
+      next: {
+        revalidate: false,
+      },
+      cache: "force-cache",
+      headers: {
+        Authorization: `Bearer ${process.env.SLACK_BOT}`,
+      },
+    },
+  ).then((x) => x.json());
+
+    return req2;
+
+  }
+
+  return req1;
 }
