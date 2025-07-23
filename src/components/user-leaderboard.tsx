@@ -64,14 +64,14 @@ export async function UserLeaderboard({
               </TableRow>
             ))}
             <TableRow>
-            <TableCell/>
-            <TableCell/>
+              <TableCell />
+              <TableCell />
               <TableCell>
-                <MonetaryValue value={ttop} currency="shells" show={currency}/>
+                <MonetaryValue value={ttop} currency="shells" show={currency} />
               </TableCell>
-            <TableCell className="text-right">
-                {(ttop * 100 / total).toFixed(2)}%
-            </TableCell>
+              <TableCell className="text-right">
+                {((ttop * 100) / total).toFixed(2)}%
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

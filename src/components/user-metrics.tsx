@@ -12,7 +12,7 @@ export function UserMetrics({
   lorenz: LM;
   gini: number;
   shop: ShopMetrics;
-    currency: Currency
+  currency: Currency;
 }) {
   return (
     <>

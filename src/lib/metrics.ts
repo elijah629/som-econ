@@ -159,7 +159,7 @@ function calculateCounts(
     shop: Array.from(purchases, ([name, [purchases, value]]) => ({
       name,
       purchases,
-      value
+      value,
     })).sort((a, b) => b.purchases - a.purchases),
   };
 }

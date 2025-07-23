@@ -12,8 +12,8 @@ export function MonetaryValue({
   value: number;
   currency: Currency;
   show: Currency;
-  mult?: number,
-  right?: boolean
+  mult?: number;
+  right?: boolean;
 }) {
   const converted = convertCurrency(value, currency, show) * mult;
   const formattedAmount =
@@ -28,5 +28,9 @@ export function MonetaryValue({
       </>
     );
 
-  return <span className={cn("flex items-center gap-2", right && "justify-end")}>{formattedAmount}</span>;
+  return (
+    <span className={cn("flex items-center gap-2", right && "justify-end")}>
+      {formattedAmount}
+    </span>
+  );
 }

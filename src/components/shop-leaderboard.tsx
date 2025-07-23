@@ -17,7 +17,13 @@ import {
 import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
 
-export function ShopLeaderboard({ shop, currency }: { shop: ShopMetrics, currency: Currency }) {
+export function ShopLeaderboard({
+  shop,
+  currency,
+}: {
+  shop: ShopMetrics;
+  currency: Currency;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -32,9 +38,7 @@ export function ShopLeaderboard({ shop, currency }: { shop: ShopMetrics, currenc
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Approx purchases</TableHead>
-              <TableHead className="text-right">
-                Value
-              </TableHead>
+              <TableHead className="text-right">Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -43,14 +47,29 @@ export function ShopLeaderboard({ shop, currency }: { shop: ShopMetrics, currenc
                 <TableCell>{name}</TableCell>
                 <TableCell>{Math.ceil(purchases)}</TableCell>
                 <TableCell>
-                  <MonetaryValue right value={value} mult={purchases} currency="shells" show={currency}/>
+                  <MonetaryValue
+                    right
+                    value={value}
+                    mult={purchases}
+                    currency="shells"
+                    show={currency}
+                  />
                 </TableCell>
               </TableRow>
             ))}
             <TableRow>
               <TableCell className="font-bold">Total</TableCell>
-              <TableCell>{Math.ceil(shop.reduce((a, b) => a + b.purchases, 0))}</TableCell>
-              <TableCell><MonetaryValue right value={shop.reduce((a, b) => a + (b.value * b.purchases), 0)} currency="shells" show={currency}/></TableCell>
+              <TableCell>
+                {Math.ceil(shop.reduce((a, b) => a + b.purchases, 0))}
+              </TableCell>
+              <TableCell>
+                <MonetaryValue
+                  right
+                  value={shop.reduce((a, b) => a + b.value * b.purchases, 0)}
+                  currency="shells"
+                  show={currency}
+                />
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

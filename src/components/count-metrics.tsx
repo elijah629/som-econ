@@ -80,8 +80,14 @@ export function CountMetrics({
   };
 
   const total = {
-    net: { curr: net.at(-1)!.cumulativeTotal, prev: net.at(-2)!.cumulativeTotal },
-    tx:  { curr: transaction.at(-1)!.cumulativeTotal, prev: transaction.at(-2)!.cumulativeTotal },
+    net: {
+      curr: net.at(-1)!.cumulativeTotal,
+      prev: net.at(-2)!.cumulativeTotal,
+    },
+    tx: {
+      curr: transaction.at(-1)!.cumulativeTotal,
+      prev: transaction.at(-2)!.cumulativeTotal,
+    },
   };
 
   return (
@@ -110,16 +116,21 @@ export function CountMetrics({
                 <span className="text-lg leading-none items-center flex gap-2 font-bold sm:text-3xl">
                   {currencies[chart] ? (
                     <span className="mr-7">
-                    <MonetaryValue
-                      value={total[chart].curr}
-                      currency={currencies[chart]}
-                      show={currency}
-                    />
+                      <MonetaryValue
+                        value={total[chart].curr}
+                        currency={currencies[chart]}
+                        show={currency}
+                      />
                     </span>
                   ) : (
                     total[chart].curr.toLocaleString()
                   )}
-                  <Ticker value={(total[chart].curr - total[chart].prev) / total[chart].curr}/>
+                  <Ticker
+                    value={
+                      (total[chart].curr - total[chart].prev) /
+                      total[chart].curr
+                    }
+                  />
                 </span>
               </button>
             );
@@ -188,7 +199,7 @@ export function CountMetrics({
             <Line
               type="monotone"
               dataKey="cumulativeTotal"
-            strokeWidth={2}
+              strokeWidth={2}
               dot={false}
             />
           </ComposedChart>

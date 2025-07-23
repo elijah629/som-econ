@@ -34,7 +34,12 @@ export default async function Statistics({
         net={net}
         transaction={transaction}
       />
-      <UserMetrics currency={currency as Currency} shop={shop} lorenz={lorenz} gini={gini} />
+      <UserMetrics
+        currency={currency as Currency}
+        shop={shop}
+        lorenz={lorenz}
+        gini={gini}
+      />
     </main>
   );
 }
