@@ -43,7 +43,7 @@ export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
     },
   ).then((x) => x.json());
 
-  if (!req1.profile) {
+  /*if (!req1.profile) {
     await new Promise(r => setTimeout(r, 60_000)); // uhh yeah
 
     const req2 = await fetch(
@@ -61,7 +61,7 @@ export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
 
     return req2;
 
-  }
+  }*/
 
   return req1;
 }

@@ -1,4 +1,4 @@
-import { fetchLeaderboard } from "@/lib/explorpheus";
+import { fetchLeaderboard, ranked } from "@/lib/explorpheus";
 import {
   Table,
   TableBody,
@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import type { Leaderboard } from "@/lib/explorpheus";
 import {
   Card,
@@ -33,12 +32,11 @@ export async function generateStaticParams() {
 
 export default async function Leaderboard({ params }: { params: Promise<{ page: string }> }) {
   const page = Number((await params).page);
-  const leaderboard = (await fetchLeaderboard());
+  const leaderboard = ranked(await fetchLeaderboard());
   const slice = leaderboard.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
   const total = leaderboard.reduce((a, b) => a + b.shells, 0);
 
   return <main>
-
       <h1 className="text-3xl font-bold mb-3 text-center">
       Summer of Making economic leaderboard
       </h1>
@@ -54,6 +52,7 @@ export default async function Leaderboard({ params }: { params: Promise<{ page: 
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Rank</TableHead>
               <TableHead>Picture</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Balance (shells)</TableHead>
@@ -88,7 +87,7 @@ export default async function Leaderboard({ params }: { params: Promise<{ page: 
               <ChevronLeft/> Previous
             </Link>
           </Button>}
-          {page === leaderboard.length / PER_PAGE ?  <Button variant="outline" disabled>Next <ChevronRight/></Button> : <Button  variant="outline" asChild>
+          {page === Math.ceil(leaderboard.length / PER_PAGE) - 1 ?  <Button variant="outline" disabled>Next <ChevronRight/></Button> : <Button  variant="outline" asChild>
 <Link href={`/leaderboard/${page + 1}`}>
               Next <ChevronRight/>
             </Link>

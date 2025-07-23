@@ -22,8 +22,10 @@ export function ShopLeaderboard({
   currency,
 }: {
   shop: ShopMetrics;
-  currency: Currency;
+  currency: Currency | "both";
 }) {
+  const total = shop.reduce((a, b) => a + b.value * b.purchases, 0);
+
   return (
     <Card>
       <CardHeader>
@@ -38,7 +40,8 @@ export function ShopLeaderboard({
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Approx purchases</TableHead>
-              <TableHead className="text-right">Value</TableHead>
+              {currency === "both" &&   <TableHead className="text-right">Value (shells)</TableHead>}
+              <TableHead className="text-right">Value (USD)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -52,7 +55,16 @@ export function ShopLeaderboard({
                     value={value}
                     mult={purchases}
                     currency="shells"
-                    show={currency}
+                    show="shells"
+                  />
+                </TableCell>
+                <TableCell>
+                  <MonetaryValue
+                    right
+                    value={value}
+                    mult={purchases}
+                    currency="shells"
+                    show="USD"
                   />
                 </TableCell>
               </TableRow>
@@ -62,14 +74,34 @@ export function ShopLeaderboard({
               <TableCell>
                 {Math.ceil(shop.reduce((a, b) => a + b.purchases, 0))}
               </TableCell>
+                {currency === "both" ?
+                <>
+                  <TableCell>
+                <MonetaryValue
+                  right
+                  value={total}
+                  currency="shells"
+                  show="shells"
+                />
+              </TableCell>
               <TableCell>
                 <MonetaryValue
                   right
-                  value={shop.reduce((a, b) => a + b.value * b.purchases, 0)}
+                  value={total}
+                  currency="shells"
+                  show="USD"
+                />
+              </TableCell>
+                </> :
+              <TableCell>
+                <MonetaryValue
+                  right
+                  value={total}
                   currency="shells"
                   show={currency}
                 />
               </TableCell>
+                }
             </TableRow>
           </TableBody>
         </Table>

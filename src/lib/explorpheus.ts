@@ -8,6 +8,9 @@ export interface RawUser {
   payouts: RawPayout[];
 }
 
+// User - Admin modification
+// ShopOrder - purchases
+// ShipEvent - payouts
 export type PayoutType = "User" | "ShopOrder" | "ShipEvent";
 
 export interface RawPayout {
@@ -32,6 +35,16 @@ export interface Payout {
   id: number;
   amount: number;
   createdAt: Date;
+}
+
+/* ranking */
+export type RankedLeaderboard = RankedUser[];
+
+export interface RankedUser {
+  slackId: string;
+  shells: number;
+  rank: number;
+  payouts: Payout[]
 }
 
 /* retreival functions */
@@ -64,4 +77,18 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
   const raw = await fetchRawLeaderboard();
 
   return parseLeaderboard(raw);
+}
+
+export function ranked(leaderboard: Leaderboard): RankedLeaderboard {
+  const ranksMap = new Map();
+  let rank = 1;
+
+  for (const user of leaderboard) {
+    if (!ranksMap.has(user.shells)) {
+      ranksMap.set(user.shells, rank);
+    }
+    rank++;
+  }
+
+  return leaderboard.map((user) => ({ ...user, rank: ranksMap.get(user.shells)}));
 }

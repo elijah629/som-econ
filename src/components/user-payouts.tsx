@@ -1,6 +1,6 @@
 "use client"
 
-import { Area, CartesianGrid, ComposedChart, Line, XAxis } from "recharts"
+import { Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -28,6 +28,9 @@ const chartConfig = {
   },
   createdAt: {
     label: "Created At",
+  },
+  type: {
+    label: "Type",
   },
   id: {
     label: "Id"
@@ -63,7 +66,7 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
   const off = gradientOffset(payouts)
 
   return (
-    <Card>
+    <Card className="grow">
       <CardHeader>
         <CardTitle>Transactions</CardTitle>
         <CardDescription>All user Transactions</CardDescription>
@@ -88,6 +91,7 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
                 })
               }
             />
+            <YAxis/>
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
@@ -113,6 +117,10 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
               stroke="var(--chart-1)"
               strokeWidth={2}
               dot={false}
+            />
+
+            <Line
+              dataKey="type"
             />
           </ComposedChart>
         </ChartContainer>

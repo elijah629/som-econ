@@ -1,4 +1,4 @@
-import { Leaderboard } from "@/lib/explorpheus";
+import { RankedLeaderboard } from "@/lib/explorpheus";
 import { CountMetrics } from "@/components/count-metrics";
 import { UserLeaderboard } from "@/components/user-leaderboard";
 import { IoMetrics } from "@/lib/metrics";
@@ -11,7 +11,7 @@ export function MarketMetrics({
   net,
 }: {
   currency: "USD" | "shells";
-  leaderboard: Leaderboard;
+  leaderboard: RankedLeaderboard;
   net: IoMetrics;
   transaction: IoMetrics;
 }) {

@@ -78,6 +78,7 @@ export const PRICE_MAP = new Map<number, string[]>([
   [250, ["Proxmark 3 Easy"]],
   [237, ["Dupont Crimping Tool Kit"]],
   [220, ["Squishmallow"]],
+  [216, ["Mullvad VPN 6 Month Voucher"]],
   [211, ["Smolhaj"]],
   [182, ["Qiyi XMD XT3 speedcube"]],
   [180, ["Brother Label Maker"]],

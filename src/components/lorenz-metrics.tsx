@@ -17,6 +17,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import type { LorenzMetrics } from "@/lib/metrics";
+import { cn } from "@/lib/utils";
 
 const chartConfig = {
   population: {
@@ -82,7 +83,7 @@ export function LorenzMetrics({
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="text-muted-foreground leading-none">
+        <div className={cn("text-muted-foreground leading-none", gini < 0.3 ? "text-green-300" : gini < 0.5 ? "text-orange-300" : "text-red-400")}>
           Inequality (Gini) {(gini * 100).toFixed(2)}%
         </div>
       </CardFooter>

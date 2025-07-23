@@ -1,6 +1,6 @@
 import { MarketMetrics } from "@/components/market-metrics";
 import { UserMetrics } from "@/components/user-metrics";
-import { fetchLeaderboard } from "@/lib/explorpheus";
+import { fetchLeaderboard, ranked } from "@/lib/explorpheus";
 import { calculateMetrics } from "@/lib/metrics";
 import { Currency } from "@/types/currency";
 
@@ -19,6 +19,8 @@ export default async function Statistics({
   const { net, transaction, lorenz, gini, shop, payout } =
     calculateMetrics(leaderboard);
 
+  const r = ranked(leaderboard);
+
   return (
     <main>
       <h1 className="text-3xl font-bold mb-3 text-center">
@@ -30,7 +32,7 @@ export default async function Statistics({
       </h3>
       <MarketMetrics
         currency={currency as Currency}
-        leaderboard={leaderboard}
+        leaderboard={r}
         net={net}
         transaction={transaction}
       />

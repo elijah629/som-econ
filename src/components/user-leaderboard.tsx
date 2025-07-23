@@ -1,7 +1,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -9,7 +8,7 @@ import {
 } from "@/components/ui/table";
 
 import { fetchUser } from "@/lib/slack";
-import type { Leaderboard, User } from "@/lib/explorpheus";
+import type { RankedLeaderboard, RankedUser } from "@/lib/explorpheus";
 import {
   Card,
   CardContent,
@@ -30,7 +29,7 @@ export async function UserLeaderboard({
   currency,
   total,
 }: {
-  leaderboard: Leaderboard;
+  leaderboard: RankedLeaderboard;
   currency: Currency;
   total: number;
 }) {
@@ -49,6 +48,7 @@ export async function UserLeaderboard({
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Rank</TableHead>
               <TableHead>Picture</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Balance ({currency})</TableHead>
@@ -93,7 +93,7 @@ export async function LeaderboardUser({
   user,
   currency,
 }: {
-  user: User;
+  user: RankedUser;
   currency: Currency | "both";
   total: number;
 }) {
@@ -103,6 +103,9 @@ export async function LeaderboardUser({
 
   return (
     <>
+      <TableCell className="font-bold">
+        #{user.rank}
+      </TableCell>
       <TableCell>
         <Image
           src={

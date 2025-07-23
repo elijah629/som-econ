@@ -1,4 +1,4 @@
-import { Leaderboard, PayoutType } from "@/lib/explorpheus";
+import { Leaderboard, Payout, PayoutType } from "@/lib/explorpheus";
 import { findClosestItems } from "@/lib/shop";
 
 export interface Metrics {
@@ -117,15 +117,7 @@ function calculateCounts(
         netEntry.out -= payout.amount;
         txEntry.out += 1;
 
-        const closest = findClosestItems(-payout.amount);
-
-        for (let i = 0; i < closest.length; i++) {
-          const item = closest[i];
-          const increment = 1 / (i + 1);
-          const previous = purchases.get(item) ?? [0, 0];
-
-          purchases.set(item, [previous[0] + increment, -payout.amount]);
-        }
+        appendShopMetricDeltasFromPayout(payout, purchases);
       }
 
       netMap.set(bucketKey, netEntry);
@@ -163,13 +155,43 @@ function calculateCounts(
   return {
     net,
     transaction,
-    shop: Array.from(purchases, ([name, [purchases, value]]) => ({
+    shop: buildShopMetricsFromPurchaseMap(purchases),
+    payout: Array.from(payoutTypes, ([type, count]) => ({ type, count }))
+  };
+}
+
+
+function buildShopMetricsFromPurchaseMap(purchases: Map<string, [number, number]>) {
+  return Array.from(purchases, ([name, [purchases, value]]) => ({
       name,
       purchases,
       value,
-    })).sort((a, b) => b.purchases - a.purchases),
-    payout: Array.from(payoutTypes, ([type, count]) => ({ type, count }))
-  };
+    })).sort((a, b) => b.purchases - a.purchases);
+}
+
+export function shopMetricsFromPayouts(payouts: Payout[]): ShopMetrics {
+  const purchases = new Map<string, [number, number]>();
+
+  for (const payout of payouts) {
+    appendShopMetricDeltasFromPayout(payout, purchases);
+  }
+
+  return buildShopMetricsFromPurchaseMap(purchases);
+}
+
+function appendShopMetricDeltasFromPayout(payout: Payout, purchases: Map<string, [number, number]>) {
+    if (payout.type === "ShopOrder") {
+
+        const closest = findClosestItems(-payout.amount);
+
+          for (let i = 0; i < closest.length; i++) {
+            const item = closest[i];
+            const increment = 1 / (i + 1);
+            const previous = purchases.get(item) ?? [0, 0];
+
+            purchases.set(item, [previous[0] + increment, -payout.amount]);
+          }
+        }
 }
 
 function calculateGini(lorenzData: LorenzMetrics): number {
