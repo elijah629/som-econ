@@ -1,6 +1,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -13,12 +14,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 import Image from "next/image";
-import { MonetaryValue } from "./monetary-value";
+import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
+import Link from "next/link";
 
 const AMOUNT = 12;
 
@@ -75,6 +78,11 @@ export async function UserLeaderboard({
             </TableRow>
           </TableBody>
         </Table>
+        <CardFooter>
+          <div className="w-full text-center">
+            <Link href="/leaderboard/0" className="hover:underline text-blue-500">Show all</Link>
+          </div>
+        </CardFooter>
       </CardContent>
     </Card>
   );
@@ -86,7 +94,7 @@ export async function LeaderboardUser({
   currency,
 }: {
   user: User;
-  currency: Currency;
+  currency: Currency | "both";
   total: number;
 }) {
   const {
@@ -107,10 +115,25 @@ export async function LeaderboardUser({
           alt={display_name || real_name || "Unknown user"}
         />
       </TableCell>
-      <TableCell>{display_name || real_name || "<unknown>"}</TableCell>
+      <TableCell>
+        <Link href={`/users/${user.slackId}`} className="underline">
+        {display_name || real_name || "<unknown>"}
+        </Link>
+      </TableCell>
+      {currency === "both" ?
+        <>
+          <TableCell>
+          <MonetaryValue value={user.shells} currency="shells" show="shells" />
+          </TableCell>
+
+          <TableCell>
+          <MonetaryValue value={user.shells} currency="shells" show="USD" />
+          </TableCell>
+        </>
+      :
       <TableCell>
         <MonetaryValue value={user.shells} currency="shells" show={currency} />
-      </TableCell>
+      </TableCell>}
       <TableCell className="text-right">
         {" "}
         {((user.shells * 100) / total).toFixed(2)}%

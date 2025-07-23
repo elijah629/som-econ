@@ -33,11 +33,13 @@ export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
   return await fetch(
     "https://slack.com/api/users.profile.get?user=" + slackId,
     {
+      next: {
+        revalidate: false
+      },
       cache: "force-cache",
       headers: {
         Authorization: `Bearer ${process.env.SLACK_BOT}`,
       },
-      mode: "cors",
     },
   ).then((x) => x.json());
 }

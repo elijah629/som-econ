@@ -16,11 +16,11 @@ export default async function Statistics({
     currency = "shells";
   }
 
-  const { net, transaction, lorenz, gini, shop } =
+  const { net, transaction, lorenz, gini, shop, payout } =
     calculateMetrics(leaderboard);
 
   return (
-    <main className="p-8">
+    <main>
       <h1 className="text-3xl font-bold mb-3 text-center">
         Summer of Making economic measurements
       </h1>
@@ -35,6 +35,7 @@ export default async function Statistics({
         transaction={transaction}
       />
       <UserMetrics
+        payout={payout}
         currency={currency as Currency}
         shop={shop}
         lorenz={lorenz}

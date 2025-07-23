@@ -8,7 +8,9 @@ export interface CachetUser {
 }
 
 const BASE_URL = "https://cachet.dunkirk.sh";
-const REQUEST_INIT: RequestInit = { cache: "force-cache" };
+const REQUEST_INIT: RequestInit = { cache: "force-cache", next: {
+        revalidate: false
+      }, };
 
 // yeah this is all we need... full docs @ https://cachet.dunkirk.sh/swagger
 export async function fetchUser(slackId: string): Promise<CachetUser> {

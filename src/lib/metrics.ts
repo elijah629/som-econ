@@ -1,4 +1,4 @@
-import { Leaderboard } from "@/lib/explorpheus";
+import { Leaderboard, PayoutType } from "@/lib/explorpheus";
 import { findClosestItems } from "@/lib/shop";
 
 export interface Metrics {
@@ -9,6 +9,8 @@ export interface Metrics {
   gini: number;
 
   shop: ShopMetrics;
+
+  payout: PayoutMetrics;
 }
 
 export type ShopMetrics = {
@@ -16,6 +18,8 @@ export type ShopMetrics = {
   purchases: number;
   value: number;
 }[];
+
+export type PayoutMetrics = { type: PayoutType, count: number }[];
 
 export type LorenzMetrics = {
   population: number;
@@ -46,11 +50,11 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
 }
 
 export function calculateMetrics(leaderboard: Leaderboard): Metrics {
-  const { net, transaction, shop } = calculateCounts(leaderboard, 1); // good since SoM is small
+  const { net, transaction, shop, payout } = calculateCounts(leaderboard, 1); // good since SoM is small
   const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
   const gini = calculateGini(lorenz);
 
-  return { net, transaction, lorenz, gini, shop };
+  return { net, transaction, lorenz, gini, shop, payout };
 }
 
 // Note: data must be sorted by balance high to low for this to work
@@ -80,9 +84,10 @@ function calculateLorenz(
 function calculateCounts(
   leaderboard: Leaderboard,
   rangeInDays: number,
-): { net: IoMetrics; transaction: IoMetrics; shop: ShopMetrics } {
+): { net: IoMetrics; transaction: IoMetrics; shop: ShopMetrics, payout: PayoutMetrics } {
   const purchases = new Map<string, [number, number]>();
 
+  const payoutTypes = new Map<PayoutType, number>();
   const netMap = new Map<number, { in: number; out: number; date: Date }>();
   const txMap = new Map<number, { in: number; out: number; date: Date }>();
 
@@ -102,6 +107,8 @@ function calculateCounts(
         out: 0,
         date: bucketStart,
       };
+
+      payoutTypes.set(payout.type, (payoutTypes.get(payout.type) ?? 0) + 1);
 
       if (payout.amount > 0) {
         netEntry.in += payout.amount;
@@ -161,6 +168,7 @@ function calculateCounts(
       purchases,
       value,
     })).sort((a, b) => b.purchases - a.purchases),
+    payout: Array.from(payoutTypes, ([type, count]) => ({ type, count }))
   };
 }
 

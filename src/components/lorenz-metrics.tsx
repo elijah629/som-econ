@@ -35,7 +35,7 @@ export function LorenzMetrics({
   gini: number;
 }) {
   return (
-    <Card className="grow">
+    <Card>
       <CardHeader>
         <CardTitle>Wealth distribution</CardTitle>
         <CardDescription>
