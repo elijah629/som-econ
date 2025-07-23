@@ -30,12 +30,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} dark antialiased m-8`}
       >
         <header className="bg-card text-card-foreground flex p-3 items-center mb-8 gap-6 rounded-xl border shadow-sm">
-          <Link href="/" className="font-bold text-xl">The SoMconomy</Link>
-            <nav className="ml-auto">
-              <Button asChild>
-            <Link href="/search">Search</Link>
+          <Link href="/" className="font-bold text-xl">
+            The SoMconomy
+          </Link>
+          <nav className="ml-auto">
+            <Button asChild>
+              <Link href="/search">Search</Link>
             </Button>
-            </nav>
+          </nav>
         </header>
         {children}
       </body>

@@ -13,7 +13,7 @@ export function convertCurrency(
 }
 
 const shellsUSD = [
-  [5, 0],  // Badges
+  [5, 0], // Badges
   [10, 0], // Badges
   [25, 5],
   [33, 4.99],

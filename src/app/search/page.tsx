@@ -7,21 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeaderboardUser } from "@/components/user-leaderboard";
 import { SearchBar } from "@/components/search-bar";
 import { fuzzysearch } from "@/lib/fuzzy";
 
-
 export default async function Search({
-  searchParams
+  searchParams,
 }: {
-  searchParams: Promise<{ q: string | undefined }>
+  searchParams: Promise<{ q: string | undefined }>;
 }) {
   const query = (await searchParams).q;
 
@@ -37,7 +31,9 @@ export default async function Search({
   const matches = [];
 
   for (const user of leaderboard) {
-    const { profile: { display_name, real_name } } = await fetchUser(user.slackId)
+    const {
+      profile: { display_name, real_name },
+    } = await fetchUser(user.slackId);
 
     const identifier = display_name || real_name;
 
@@ -50,38 +46,40 @@ export default async function Search({
     }
   }
 
-  return <main className="flex flex-col gap-4">
-    <SearchBar query={query}/>
-     <Card>
-      <CardHeader>
-        <CardTitle>Search</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Rank</TableHead>
-              <TableHead>Picture</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Balance (shells)</TableHead>
-              <TableHead>Balance (USD)</TableHead>
-              <TableHead className="text-right">Market control</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {matches.map((user) => (
-              <TableRow key={user.slackId}>
-                <LeaderboardUser
-                  total={total}
-                  key={user.slackId}
-                  user={user}
-                  currency="both"
-                />
+  return (
+    <main className="flex flex-col gap-4">
+      <SearchBar query={query} />
+      <Card>
+        <CardHeader>
+          <CardTitle>Search</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Rank</TableHead>
+                <TableHead>Picture</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Balance (shells)</TableHead>
+                <TableHead>Balance (USD)</TableHead>
+                <TableHead className="text-right">Market control</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-         </Card>
-  </main>
+            </TableHeader>
+            <TableBody>
+              {matches.map((user) => (
+                <TableRow key={user.slackId}>
+                  <LeaderboardUser
+                    total={total}
+                    key={user.slackId}
+                    user={user}
+                    currency="both"
+                  />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </main>
+  );
 }

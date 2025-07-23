@@ -1,6 +1,13 @@
-"use client"
+"use client";
 
-import { Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts"
+import {
+  Area,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   Card,
@@ -8,16 +15,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Payout } from "@/lib/explorpheus"
+} from "@/components/ui/chart";
+import { Payout } from "@/lib/explorpheus";
 
-export const description = "A simple area chart"
+export const description = "A simple area chart";
 
 const chartConfig = {
   amount: {
@@ -33,37 +40,40 @@ const chartConfig = {
     label: "Type",
   },
   id: {
-    label: "Id"
-  }
-} satisfies ChartConfig
+    label: "Id",
+  },
+} satisfies ChartConfig;
 
 const gradientOffset = (data: Payout[]) => {
-  const dataMax = Math.max(...data.map((i) => i.amount))
-  const dataMin = Math.min(...data.map((i) => i.amount))
+  const dataMax = Math.max(...data.map((i) => i.amount));
+  const dataMin = Math.min(...data.map((i) => i.amount));
 
-  if (dataMax <= 0) return 0
-  if (dataMin >= 0) return 1
+  if (dataMax <= 0) return 0;
+  if (dataMin >= 0) return 1;
 
-  return dataMax / (dataMax - dataMin)
-}
+  return dataMax / (dataMax - dataMin);
+};
 
 function withCumulative(payouts: Payout[]) {
-  let sum = 0
+  let sum = 0;
   return payouts
     .slice()
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    )
     .map((p) => {
-      sum += p.amount
+      sum += p.amount;
       return {
         ...p,
         cumulative: sum,
-      }
-    })
+      };
+    });
 }
 
 export function UserPayouts({ payouts }: { payouts: Payout[] }) {
-  const dataWithCumulative = withCumulative(payouts)
-  const off = gradientOffset(payouts)
+  const dataWithCumulative = withCumulative(payouts);
+  const off = gradientOffset(payouts);
 
   return (
     <Card className="grow">
@@ -91,7 +101,7 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
                 })
               }
             />
-            <YAxis/>
+            <YAxis />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
@@ -119,12 +129,10 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
               dot={false}
             />
 
-            <Line
-              dataKey="type"
-            />
+            <Line dataKey="type" />
           </ComposedChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -80,7 +80,12 @@ export async function UserLeaderboard({
         </Table>
         <CardFooter>
           <div className="w-full text-center">
-            <Link href="/leaderboard/0" className="hover:underline text-blue-500">Show all</Link>
+            <Link
+              href="/leaderboard/0"
+              className="hover:underline text-blue-500"
+            >
+              Show all
+            </Link>
           </div>
         </CardFooter>
       </CardContent>
@@ -103,9 +108,7 @@ export async function LeaderboardUser({
 
   return (
     <>
-      <TableCell className="font-bold">
-        #{user.rank}
-      </TableCell>
+      <TableCell className="font-bold">#{user.rank}</TableCell>
       <TableCell>
         <Image
           src={
@@ -120,23 +123,32 @@ export async function LeaderboardUser({
       </TableCell>
       <TableCell>
         <Link href={`/users/${user.slackId}`} className="underline">
-        {display_name || real_name || "<unknown>"}
+          {display_name || real_name || "<unknown>"}
         </Link>
       </TableCell>
-      {currency === "both" ?
+      {currency === "both" ? (
         <>
           <TableCell>
-          <MonetaryValue value={user.shells} currency="shells" show="shells" />
+            <MonetaryValue
+              value={user.shells}
+              currency="shells"
+              show="shells"
+            />
           </TableCell>
 
           <TableCell>
-          <MonetaryValue value={user.shells} currency="shells" show="USD" />
+            <MonetaryValue value={user.shells} currency="shells" show="USD" />
           </TableCell>
         </>
-      :
-      <TableCell>
-        <MonetaryValue value={user.shells} currency="shells" show={currency} />
-      </TableCell>}
+      ) : (
+        <TableCell>
+          <MonetaryValue
+            value={user.shells}
+            currency="shells"
+            show={currency}
+          />
+        </TableCell>
+      )}
       <TableCell className="text-right">
         {" "}
         {((user.shells * 100) / total).toFixed(2)}%

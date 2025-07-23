@@ -19,7 +19,7 @@ export type ShopMetrics = {
   value: number;
 }[];
 
-export type PayoutMetrics = { type: PayoutType, count: number }[];
+export type PayoutMetrics = { type: PayoutType; count: number }[];
 
 export type LorenzMetrics = {
   population: number;
@@ -84,7 +84,12 @@ function calculateLorenz(
 function calculateCounts(
   leaderboard: Leaderboard,
   rangeInDays: number,
-): { net: IoMetrics; transaction: IoMetrics; shop: ShopMetrics, payout: PayoutMetrics } {
+): {
+  net: IoMetrics;
+  transaction: IoMetrics;
+  shop: ShopMetrics;
+  payout: PayoutMetrics;
+} {
   const purchases = new Map<string, [number, number]>();
 
   const payoutTypes = new Map<PayoutType, number>();
@@ -156,17 +161,18 @@ function calculateCounts(
     net,
     transaction,
     shop: buildShopMetricsFromPurchaseMap(purchases),
-    payout: Array.from(payoutTypes, ([type, count]) => ({ type, count }))
+    payout: Array.from(payoutTypes, ([type, count]) => ({ type, count })),
   };
 }
 
-
-function buildShopMetricsFromPurchaseMap(purchases: Map<string, [number, number]>) {
+function buildShopMetricsFromPurchaseMap(
+  purchases: Map<string, [number, number]>,
+) {
   return Array.from(purchases, ([name, [purchases, value]]) => ({
-      name,
-      purchases,
-      value,
-    })).sort((a, b) => b.purchases - a.purchases);
+    name,
+    purchases,
+    value,
+  })).sort((a, b) => b.purchases - a.purchases);
 }
 
 export function shopMetricsFromPayouts(payouts: Payout[]): ShopMetrics {
@@ -179,19 +185,21 @@ export function shopMetricsFromPayouts(payouts: Payout[]): ShopMetrics {
   return buildShopMetricsFromPurchaseMap(purchases);
 }
 
-function appendShopMetricDeltasFromPayout(payout: Payout, purchases: Map<string, [number, number]>) {
-    if (payout.type === "ShopOrder") {
+function appendShopMetricDeltasFromPayout(
+  payout: Payout,
+  purchases: Map<string, [number, number]>,
+) {
+  if (payout.type === "ShopOrder") {
+    const closest = findClosestItems(-payout.amount);
 
-        const closest = findClosestItems(-payout.amount);
+    for (let i = 0; i < closest.length; i++) {
+      const item = closest[i];
+      const increment = 1 / (i + 1);
+      const previous = purchases.get(item) ?? [0, 0];
 
-          for (let i = 0; i < closest.length; i++) {
-            const item = closest[i];
-            const increment = 1 / (i + 1);
-            const previous = purchases.get(item) ?? [0, 0];
-
-            purchases.set(item, [previous[0] + increment, -payout.amount]);
-          }
-        }
+      purchases.set(item, [previous[0] + increment, -payout.amount]);
+    }
+  }
 }
 
 function calculateGini(lorenzData: LorenzMetrics): number {

@@ -44,7 +44,7 @@ export interface RankedUser {
   slackId: string;
   shells: number;
   rank: number;
-  payouts: Payout[]
+  payouts: Payout[];
 }
 
 /* retreival functions */
@@ -90,5 +90,8 @@ export function ranked(leaderboard: Leaderboard): RankedLeaderboard {
     rank++;
   }
 
-  return leaderboard.map((user) => ({ ...user, rank: ranksMap.get(user.shells)}));
+  return leaderboard.map((user) => ({
+    ...user,
+    rank: ranksMap.get(user.shells),
+  }));
 }
