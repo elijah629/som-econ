@@ -33,6 +33,7 @@ export default async function User({
       <div className="bg-card text-card-foreground flex flex-col sm:flex-row items-center justify-between gap-6 rounded-xl border p-6 shadow-sm">
         <div className="flex items-center gap-2 font-bold">
           <Image
+            unoptimized
             className="rounded-xl"
             src={image_72}
             width={72}

@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       ),
       new URL("https://summer.hackclub.com/shell.avif"),
     ],
+    formats: ["image/avif"],
   },
 };
 

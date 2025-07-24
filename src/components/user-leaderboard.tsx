@@ -111,6 +111,7 @@ export async function LeaderboardUser({
       <TableCell className="font-bold">#{user.rank}</TableCell>
       <TableCell>
         <Image
+          unoptimized
           src={
             image_72 ||
             "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-512"
