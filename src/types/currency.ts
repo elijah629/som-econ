@@ -7,9 +7,9 @@ export function convertCurrency(
 ): number {
   return fromCurrency === targetCurrency
     ? fromValue
-    : fromCurrency === "USD" && targetCurrency === "shells"
+    : (fromCurrency === "USD" && targetCurrency === "shells"
       ? usdToShells(fromValue)
-      : shellsToUSD(fromValue);
+      : shellsToUSD(fromValue));
 }
 
 const shellsUSD = [
@@ -52,7 +52,7 @@ const shellsUSD = [
   [216, 5.87 * 6], // mulvad for 6 mo
   [220, 10],
   [237, 31.98],
-  [250, 90],
+  [250, 42.99],
   [260, 39.99],
   [300, 50],
   [330, 55],
@@ -68,9 +68,9 @@ const shellsUSD = [
   [502, 54.59],
   [542, 89.99],
   [595, 119.99],
-  [620, 119.99],
-  [630, 299],
-  [632, 199.99],
+  //[620, 119.99],
+  //[630, 199.99],
+  //[632, 199.99],
   [657, 199.99],
   [665, 299],
   [670, 119.99],
@@ -124,51 +124,64 @@ const shellsUSD = [
   [12665, 1599],
 ];
 
+const usdShells = shellsUSD.map(([shells, usd]) => [usd, shells]).sort((a, b) => a[0] - b[0]);
+
 const a = 0.7275;
 const b = 0.8285;
 
-function shellsToUSD(shells: number): number {
-  if (shells > 12665) {
-    const usd = a * Math.pow(shells, b);
-    return usd;
+export function shellsToUSD(shells: number): number {
+  if (shells > 8995) {
+    return a * Math.pow(shells, b);
   }
 
-  for (let i = 0; i < shellsUSD.length - 1; i++) {
-    const [s0, u0] = shellsUSD[i];
-    const [s1, u1] = shellsUSD[i + 1];
-    if (shells === s0) return u0;
-    if (shells < s1) {
-      const t = (shells - s0) / (s1 - s0);
-      return +(u0 + t * (u1 - u0)).toFixed(2);
-    }
+  let low = 0;
+  let high = shellsUSD.length - 1;
+
+while (low <= high) {
+  const mid = (low + high) >> 1;
+  const sMid = shellsUSD[mid][0];
+
+  if (sMid < shells) {
+    low = mid + 1;
+  } else if (sMid > shells) {
+    high = mid - 1;
+  } else {
+    return shellsUSD[mid][1];
   }
-  const [s0, u0] = shellsUSD[shellsUSD.length - 2];
-  const [s1, u1] = shellsUSD[shellsUSD.length - 1];
-  const t = (shells - s0) / (s1 - s0);
-  return +(u0 + t * (u1 - u0)).toFixed(2);
 }
 
-function usdToShells(usd: number): number {
+  const i = Math.max(0, Math.min(shellsUSD.length - 2, high));
+  const [s0, u0] = shellsUSD[i];
+  const [s1, u1] = shellsUSD[i + 1];
+  const t = (shells - s0) / (s1 - s0);
+  return u0 + t * (u1 - u0);
+}
+
+
+export function usdToShells(usd: number): number {
   if (usd > 1599) {
-    const shells = Math.pow(usd / a, 1 / b);
-    return shells;
+    return Math.pow(usd / a, 1 / b);
   }
 
-  const pairs = shellsUSD.map(([shells, usdVal]) => [usdVal, shells]);
-  pairs.sort((a, b) => a[0] - b[0]);
+  let low = 0;
+  let high = usdShells.length - 1;
 
-  for (let i = 0; i < pairs.length - 1; i++) {
-    const [u0, s0] = pairs[i];
-    const [u1, s1] = pairs[i + 1];
-    if (usd === u0) return s0;
-    if (usd < u1) {
-      const t = (usd - u0) / (u1 - u0);
-      return +(s0 + t * (s1 - s0)).toFixed(2);
+  while (low <= high) {
+    const mid = (low + high) >> 1;
+    const uMid = usdShells[mid][0];
+
+    if (uMid === usd) {
+      return usdShells[mid][1];
+    } else if (uMid < usd) {
+      low = mid + 1;
+    } else {
+      high = mid - 1;
     }
   }
 
-  const [u0, s0] = pairs[pairs.length - 2];
-  const [u1, s1] = pairs[pairs.length - 1];
+  const i = Math.max(0, Math.min(usdShells.length - 2, high));
+  const [u0, s0] = usdShells[i];
+  const [u1, s1] = usdShells[i + 1];
   const t = (usd - u0) / (u1 - u0);
-  return +(s0 + t * (s1 - s0)).toFixed(2);
+  return s0 + t * (s1 - s0);
 }

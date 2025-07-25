@@ -3,6 +3,7 @@ import { CountMetrics } from "@/components/count-metrics";
 import { UserLeaderboard } from "@/components/user-leaderboard";
 import { IoMetrics } from "@/lib/metrics";
 import { CurrencyPicker } from "./currency-picker";
+import { ShellUSDChart } from "./shell-usd";
 
 export function MarketMetrics({
   currency,
@@ -21,7 +22,7 @@ export function MarketMetrics({
         <h1 className="text-3xl font-bold my-8">Market stats</h1>
         <CurrencyPicker value={currency} />
       </div>
-      <div className="flex w-full flex-col xl:flex-row gap-8">
+      <div className="flex w-full flex-col xl:flex-row gap-8 mb-8">
         <UserLeaderboard
           currency={currency}
           total={net.at(-1)!.cumulativeTotal}
@@ -29,6 +30,7 @@ export function MarketMetrics({
         />
         <CountMetrics currency={currency} net={net} transaction={transaction} />
       </div>
+        <ShellUSDChart/>
     </>
   );
 }
