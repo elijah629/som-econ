@@ -28,21 +28,26 @@ export default async function Search({
   const leaderboard = ranked(await fetchLeaderboard());
   const total = leaderboard.reduce((a, b) => a + b.shells, 0);
 
-  const matches = [];
+  const userProfiles = await Promise.all(
+    leaderboard.map((user) =>
+      fetchUser(user.slackId).then((profileData) => ({
+        ...user,
+        profile: profileData.profile,
+      })),
+    ),
+  );
 
-  for (const user of leaderboard) {
+  const matches = [];
+  for (const user of userProfiles) {
     const {
       profile: { display_name, real_name },
-    } = await fetchUser(user.slackId);
+    } = user;
 
-    const identifier = display_name || real_name;
+    const identifier = (display_name || real_name || "").toLowerCase();
 
-    if (fuzzysearch(search, identifier.toLowerCase())) {
+    if (fuzzysearch(search, identifier)) {
       matches.push(user);
-
-      if (matches.length === 10) {
-        break;
-      }
+      if (matches.length === 10) break;
     }
   }
 

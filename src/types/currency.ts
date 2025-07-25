@@ -7,9 +7,9 @@ export function convertCurrency(
 ): number {
   return fromCurrency === targetCurrency
     ? fromValue
-    : (fromCurrency === "USD" && targetCurrency === "shells"
+    : fromCurrency === "USD" && targetCurrency === "shells"
       ? usdToShells(fromValue)
-      : shellsToUSD(fromValue));
+      : shellsToUSD(fromValue);
 }
 
 const shellsUSD = [
@@ -124,7 +124,9 @@ const shellsUSD = [
   [12665, 1599],
 ];
 
-const usdShells = shellsUSD.map(([shells, usd]) => [usd, shells]).sort((a, b) => a[0] - b[0]);
+const usdShells = shellsUSD
+  .map(([shells, usd]) => [usd, shells])
+  .sort((a, b) => a[0] - b[0]);
 
 const a = 0.7275;
 const b = 0.8285;
@@ -137,18 +139,18 @@ export function shellsToUSD(shells: number): number {
   let low = 0;
   let high = shellsUSD.length - 1;
 
-while (low <= high) {
-  const mid = (low + high) >> 1;
-  const sMid = shellsUSD[mid][0];
+  while (low <= high) {
+    const mid = (low + high) >> 1;
+    const sMid = shellsUSD[mid][0];
 
-  if (sMid < shells) {
-    low = mid + 1;
-  } else if (sMid > shells) {
-    high = mid - 1;
-  } else {
-    return shellsUSD[mid][1];
+    if (sMid < shells) {
+      low = mid + 1;
+    } else if (sMid > shells) {
+      high = mid - 1;
+    } else {
+      return shellsUSD[mid][1];
+    }
   }
-}
 
   const i = Math.max(0, Math.min(shellsUSD.length - 2, high));
   const [s0, u0] = shellsUSD[i];
@@ -156,7 +158,6 @@ while (low <= high) {
   const t = (shells - s0) / (s1 - s0);
   return u0 + t * (u1 - u0);
 }
-
 
 export function usdToShells(usd: number): number {
   if (usd > 1599) {

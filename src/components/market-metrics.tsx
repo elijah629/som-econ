@@ -30,7 +30,7 @@ export function MarketMetrics({
         />
         <CountMetrics currency={currency} net={net} transaction={transaction} />
       </div>
-        <ShellUSDChart/>
+      <ShellUSDChart />
     </>
   );
 }

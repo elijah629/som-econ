@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -8,21 +8,21 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { shellsToUSD } from "@/types/currency"
-import { MonetaryValue } from "./monetary-value"
+} from "@/components/ui/chart";
+import { shellsToUSD } from "@/types/currency";
+import { MonetaryValue } from "./monetary-value";
 
-export const description = "A linear line chart"
+export const description = "A linear line chart";
 
-const chartData = Array.from({ length: 15000 / 5  }, (_, i) => ({
+const chartData = Array.from({ length: 15000 / 5 }, (_, i) => ({
   shells: i * 5,
-  usd: shellsToUSD(i * 5)
+  usd: shellsToUSD(i * 5),
 }));
 
 const chartConfig = {
@@ -32,16 +32,19 @@ const chartConfig = {
   },
   usd: {
     label: "USD",
-    color: "var(--chart-2)"
-  }
-} satisfies ChartConfig
+    color: "var(--chart-2)",
+  },
+} satisfies ChartConfig;
 
 export function ShellUSDChart() {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Shell-USD conversion graph</CardTitle>
-        <CardDescription>Linear interpolation for shop items, Linear regression for all other values</CardDescription>
+        <CardDescription>
+          Linear interpolation for shop items, Linear regression for all other
+          values
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -60,21 +63,33 @@ export function ShellUSDChart() {
               axisLine={false}
               tickMargin={8}
             />
-            <YAxis/>
+            <YAxis />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent nameKey="usd"
-                labelFormatter={(_, [{ payload: { shells }}]) => <MonetaryValue value={shells} currency="shells" show="shells"/>}   />}
+              content={
+                <ChartTooltipContent
+                  nameKey="usd"
+                  labelFormatter={(
+                    _,
+                    [
+                      {
+                        payload: { shells },
+                      },
+                    ],
+                  ) => (
+                    <MonetaryValue
+                      value={shells}
+                      currency="shells"
+                      show="shells"
+                    />
+                  )}
+                />
+              }
             />
-            <Line
-              dataKey="usd"
-              type="linear"
-              strokeWidth={2}
-              dot={false}
-            />
+            <Line dataKey="usd" type="linear" strokeWidth={2} dot={false} />
           </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

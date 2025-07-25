@@ -21,6 +21,7 @@ import Image from "next/image";
 import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
 import Link from "next/link";
+import { unstable_cacheLife } from "next/cache";
 
 const AMOUNT = 12;
 
