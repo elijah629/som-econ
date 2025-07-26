@@ -34,7 +34,7 @@ export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
     "https://slack.com/api/users.profile.get?user=" + slackId,
     {
       next: {
-        revalidate: false,
+        revalidate: 3600,
       },
       cache: "force-cache",
       headers: {

@@ -1,7 +1,5 @@
 /* raw data types */
 
-import { cacheLife } from "next/dist/server/use-cache/cache-life";
-
 export type RawLeaderboard = RawUser[];
 
 export interface RawUser {
