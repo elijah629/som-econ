@@ -1,3 +1,4 @@
+import { unstable_cacheLife } from "next/cache";
 import { fetchRawLeaderboard, parseLeaderboard, ranked, RankedUser } from "./explorpheus";
 import { fetchUser, SlackProfile } from "./slack";
 
@@ -12,6 +13,9 @@ export interface User {
 }
 
 export async function fetchLeaderboard(): Promise<Leaderboard> {
+  "use cache";
+  unstable_cacheLife("hours");
+
   const leaderboard = ranked(parseLeaderboard(await fetchRawLeaderboard()));
   // const profiles = await allRatelimited(leaderboard.map(x => () => fetchUser(x.slackId)), 60_000 * 5);
   // const profiles = await Promise.all(leaderboard.map(x => fetchUser(x.slackId)));
@@ -19,6 +23,7 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
 
   for (const user of leaderboard) {
     profiles.push(await fetchUser(user.slackId));
+    // await new Promise(resolve => setTimeout(resolve, 1000 / 10));
   }
 
   return { users: leaderboard.map((explorpheus, i) => ({

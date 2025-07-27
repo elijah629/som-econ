@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif"],
   },
+  experimental: {
+    cacheComponents: true
+  }
 };
 
 export default nextConfig;

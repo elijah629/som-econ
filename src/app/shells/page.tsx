@@ -4,21 +4,8 @@ import { fetchLeaderboard } from "@/lib/leaderboard";
 import { calculateMetrics } from "@/lib/metrics";
 import { Currency } from "@/types/currency";
 
-export const dynamic = "force-static";
-
-export async function generateStaticParams() {
-  return [
-    { currency: "USD" },
-    { currency: "shells" },
-  ];
-}
-
-export default async function Statistics({
-  params,
-}: {
-  params: Promise<{ currency: "USD" | "shells" }>,
-}) {
-  const currency = (await params).currency;
+export default async function Statistics() {
+  const currency = "shells";
 
   const leaderboard = await fetchLeaderboard();
 
