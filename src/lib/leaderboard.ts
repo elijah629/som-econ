@@ -13,8 +13,13 @@ export interface User {
 
 export async function fetchLeaderboard(): Promise<Leaderboard> {
   const leaderboard = ranked(parseLeaderboard(await fetchRawLeaderboard()));
-  // const profiles = await allRatelimited(leaderboard.map(x => () => fetchUser(x.slackId)), 50_000);
-  const profiles = await Promise.all(leaderboard.map(x => fetchUser(x.slackId)));
+  // const profiles = await allRatelimited(leaderboard.map(x => () => fetchUser(x.slackId)), 60_000 * 5);
+  // const profiles = await Promise.all(leaderboard.map(x => fetchUser(x.slackId)));
+  const profiles: SlackProfile[] = [];
+
+  for (const user of leaderboard) {
+    profiles.push(await fetchUser(user.slackId));
+  }
 
   return { users: leaderboard.map((explorpheus, i) => ({
     explorpheus,
