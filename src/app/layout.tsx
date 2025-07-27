@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { SearchBar } from "@/components/search-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: "Summer of Making economic measurements",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -34,9 +34,7 @@ export default function RootLayout({
             The SoMconomy
           </Link>
           <nav className="ml-auto">
-            <Button asChild>
-              <Link href="/search">Search</Link>
-            </Button>
+            <SearchBar/>
           </nav>
         </header>
         {children}

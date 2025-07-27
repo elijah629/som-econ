@@ -8,17 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Shell } from "@/components/shell";
 
 export function CurrencyPicker({ value }: { value: Currency }) {
   const router = useRouter();
-  const pathname = usePathname();
+
   return (
     <Select
       value={value}
       onValueChange={(value) => {
-        router.push(`${pathname}?currency=${value}`);
+        router.push(`/${value}`);
       }}
     >
       <SelectTrigger

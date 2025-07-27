@@ -22,9 +22,9 @@ export interface RawPayout {
 
 /* parsed data types */
 
-export type Leaderboard = User[];
+export type ParsedLeaderboard = ParsedUser[];
 
-export interface User {
+export interface ParsedUser {
   slackId: string;
   shells: number;
   payouts: Payout[];
@@ -58,7 +58,7 @@ export async function fetchRawLeaderboard(): Promise<RawLeaderboard> {
   }).then((raw) => raw.json())) as RawLeaderboard;
 }
 
-export function parseLeaderboard(raw: RawLeaderboard): Leaderboard {
+export function parseLeaderboard(raw: RawLeaderboard): ParsedLeaderboard {
   return raw
     .map((user) => ({
       slackId: user.slack_id,
@@ -73,13 +73,7 @@ export function parseLeaderboard(raw: RawLeaderboard): Leaderboard {
     .sort((a, b) => b.shells - a.shells);
 }
 
-export async function fetchLeaderboard(): Promise<Leaderboard> {
-  const raw = await fetchRawLeaderboard();
-
-  return parseLeaderboard(raw);
-}
-
-export function ranked(leaderboard: Leaderboard): RankedLeaderboard {
+export function ranked(leaderboard: ParsedLeaderboard): RankedLeaderboard {
   const ranksMap = new Map();
   let rank = 1;
 

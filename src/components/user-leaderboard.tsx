@@ -7,8 +7,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { fetchUser } from "@/lib/slack";
-import type { RankedLeaderboard, RankedUser } from "@/lib/explorpheus";
 import {
   Card,
   CardContent,
@@ -21,7 +19,7 @@ import Image from "next/image";
 import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
 import Link from "next/link";
-import { unstable_cacheLife } from "next/cache";
+import { Leaderboard, User } from "@/lib/leaderboard";
 
 const AMOUNT = 12;
 
@@ -30,19 +28,19 @@ export async function UserLeaderboard({
   currency,
   total,
 }: {
-  leaderboard: RankedLeaderboard;
+  leaderboard: Leaderboard;
   currency: Currency;
   total: number;
 }) {
-  const top = leaderboard.slice(0, AMOUNT);
-  const ttop = top.reduce((a, b) => a + b.shells, 0);
+  const top = leaderboard.users.slice(0, AMOUNT);
+  const ttop = top.reduce((a, b) => a + b.explorpheus.shells, 0);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>
-          Top {AMOUNT} out of {leaderboard.length} users with a non-zero balance
+          Top {AMOUNT} out of {leaderboard.users.length} users with at least one transactions
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -58,10 +56,10 @@ export async function UserLeaderboard({
           </TableHeader>
           <TableBody>
             {top.map((user) => (
-              <TableRow key={user.slackId}>
+              <TableRow key={user.explorpheus.slackId}>
                 <LeaderboardUser
                   total={total}
-                  key={user.slackId}
+                  key={user.explorpheus.slackId}
                   user={user}
                   currency={currency}
                 />
@@ -99,17 +97,15 @@ export async function LeaderboardUser({
   user,
   currency,
 }: {
-  user: RankedUser;
+  user: User;
   currency: Currency | "both";
   total: number;
 }) {
-  const {
-    profile: { display_name, real_name, image_72 },
-  } = await fetchUser(user.slackId);
+  const { explorpheus: { rank, shells, slackId }, slack: { display_name, real_name, image_72 } } = user;
 
   return (
     <>
-      <TableCell className="font-bold">#{user.rank}</TableCell>
+      <TableCell className="font-bold">#{rank}</TableCell>
       <TableCell>
         <Image
           unoptimized
@@ -124,7 +120,7 @@ export async function LeaderboardUser({
         />
       </TableCell>
       <TableCell>
-        <Link href={`/users/${user.slackId}`} className="underline">
+        <Link href={`/users/${slackId}`} className="underline">
           {display_name || real_name || "<unknown>"}
         </Link>
       </TableCell>
@@ -132,20 +128,20 @@ export async function LeaderboardUser({
         <>
           <TableCell>
             <MonetaryValue
-              value={user.shells}
+              value={shells}
               currency="shells"
               show="shells"
             />
           </TableCell>
 
           <TableCell>
-            <MonetaryValue value={user.shells} currency="shells" show="USD" />
+            <MonetaryValue value={shells} currency="shells" show="USD" />
           </TableCell>
         </>
       ) : (
         <TableCell>
           <MonetaryValue
-            value={user.shells}
+            value={shells}
             currency="shells"
             show={currency}
           />
@@ -153,7 +149,7 @@ export async function LeaderboardUser({
       )}
       <TableCell className="text-right">
         {" "}
-        {((user.shells * 100) / total).toFixed(2)}%
+        {((shells * 100) / total).toFixed(2)}%
       </TableCell>
     </>
   );

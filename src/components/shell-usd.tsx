@@ -18,8 +18,6 @@ import {
 import { shellsToUSD } from "@/types/currency";
 import { MonetaryValue } from "./monetary-value";
 
-export const description = "A linear line chart";
-
 const chartData = Array.from({ length: 15000 / 5 }, (_, i) => ({
   shells: i * 5,
   usd: shellsToUSD(i * 5),

@@ -1,5 +1,3 @@
-import { fetchLeaderboard, ranked } from "@/lib/explorpheus";
-import { fetchUser } from "@/lib/slack";
 import {
   Table,
   TableBody,
@@ -9,8 +7,9 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeaderboardUser } from "@/components/user-leaderboard";
-import { SearchBar } from "@/components/search-bar";
 import { fuzzysearch } from "@/lib/fuzzy";
+import { fetchLeaderboard } from "@/lib/leaderboard";
+import { notFound } from "next/navigation";
 
 export default async function Search({
   searchParams,
@@ -20,40 +19,17 @@ export default async function Search({
   const query = (await searchParams).q;
 
   if (!query) {
-    return <SearchBar />;
+    notFound();
   }
 
   const search = query.toLowerCase();
 
-  const leaderboard = ranked(await fetchLeaderboard());
-  const total = leaderboard.reduce((a, b) => a + b.shells, 0);
+  const { users: leaderboard, totalShells } = await fetchLeaderboard();
 
-  const userProfiles = await Promise.all(
-    leaderboard.map((user) =>
-      fetchUser(user.slackId).then((profileData) => ({
-        ...user,
-        profile: profileData.profile,
-      })),
-    ),
-  );
-
-  const matches = [];
-  for (const user of userProfiles) {
-    const {
-      profile: { display_name, real_name },
-    } = user;
-
-    const identifier = (display_name || real_name || "").toLowerCase();
-
-    if (fuzzysearch(search, identifier)) {
-      matches.push(user);
-      if (matches.length === 10) break;
-    }
-  }
+  const matches = leaderboard.filter(x => fuzzysearch(search, (x.slack.display_name || x.slack.real_name || "").toLowerCase()));
 
   return (
     <main className="flex flex-col gap-4">
-      <SearchBar query={query} />
       <Card>
         <CardHeader>
           <CardTitle>Search</CardTitle>
@@ -72,10 +48,9 @@ export default async function Search({
             </TableHeader>
             <TableBody>
               {matches.map((user) => (
-                <TableRow key={user.slackId}>
+                <TableRow key={user.explorpheus.slackId}>
                   <LeaderboardUser
-                    total={total}
-                    key={user.slackId}
+                    total={totalShells}
                     user={user}
                     currency="both"
                   />

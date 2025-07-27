@@ -1,6 +1,10 @@
 export interface SlackUserResponse {
   ok: boolean;
-  profile: {
+  profile?: SlackProfile
+}
+
+export interface SlackProfile {
+
     /*title: string,
         phone: string,
         skype: string,
@@ -26,22 +30,23 @@ export interface SlackUserResponse {
     image_192: string;
     image_512: string;
     // status_text_canonical: string
-  };
 }
 
-export async function fetchUser(slackId: string): Promise<SlackUserResponse> {
-  const req1 = await fetch(
+export async function fetchUser(slackId: string): Promise<SlackProfile> {
+  const res: SlackUserResponse = await fetch(
     "https://slack.com/api/users.profile.get?user=" + slackId,
     {
-      next: {
-        revalidate: 3600,
-      },
       cache: "force-cache",
+      next: { revalidate: 3600 },
       headers: {
         Authorization: `Bearer ${process.env.SLACK_BOT}`,
       },
     },
   ).then((x) => x.json());
 
-  return req1;
+  if (!res.profile) {
+    throw new Error("Profile not found / Ratelimited");
+  }
+
+  return res.profile;
 }

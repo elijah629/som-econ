@@ -24,8 +24,6 @@ import {
 } from "@/components/ui/chart";
 import { Payout } from "@/lib/explorpheus";
 
-export const description = "A simple area chart";
-
 const chartConfig = {
   amount: {
     label: "Amount",
@@ -78,7 +76,7 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
   return (
     <Card className="grow">
       <CardHeader>
-        <CardTitle>Transactions</CardTitle>
+        <CardTitle>Transactions ({payouts.length})</CardTitle>
         <CardDescription>All user Transactions</CardDescription>
       </CardHeader>
       <CardContent>

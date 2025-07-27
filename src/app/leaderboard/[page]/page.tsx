@@ -1,4 +1,3 @@
-import { fetchLeaderboard, ranked } from "@/lib/explorpheus";
 import {
   Table,
   TableBody,
@@ -6,7 +5,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Leaderboard } from "@/lib/explorpheus";
 import {
   Card,
   CardContent,
@@ -16,17 +14,17 @@ import {
 } from "@/components/ui/card";
 import { LeaderboardUser } from "@/components/user-leaderboard";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { fetchLeaderboard } from "@/lib/leaderboard";
 
-export const dynamicParams = false;
-export const dynamic = "force-static";
 
 const PER_PAGE = 10;
 
 export async function generateStaticParams() {
-  const pages = Math.ceil((await fetchLeaderboard()).length / PER_PAGE);
-
+  const leaderboard = await fetchLeaderboard();
+  const pages = Math.ceil((leaderboard.users
+    .length / PER_PAGE));
   return Array.from({ length: pages }, (_, i) => ({ page: i.toString() }));
 }
 
@@ -36,9 +34,12 @@ export default async function Leaderboard({
   params: Promise<{ page: string }>;
 }) {
   const page = Number((await params).page);
-  const leaderboard = ranked(await fetchLeaderboard());
+  const { users: leaderboard, totalShells } = await fetchLeaderboard();
   const slice = leaderboard.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
-  const total = leaderboard.reduce((a, b) => a + b.shells, 0);
+
+
+  const first = 0;
+  const last = Math.ceil(leaderboard.length / PER_PAGE) - 1;
 
   return (
     <main>
@@ -67,10 +68,9 @@ export default async function Leaderboard({
             </TableHeader>
             <TableBody>
               {slice.map((user) => (
-                <TableRow key={user.slackId}>
+                <TableRow key={user.explorpheus.slackId}>
                   <LeaderboardUser
-                    total={total}
-                    key={user.slackId}
+                    total={totalShells}
                     user={user}
                     currency="both"
                   />
@@ -81,27 +81,52 @@ export default async function Leaderboard({
         </CardContent>
         <CardFooter>
           <div className="flex justify-center items-center w-full gap-2">
-            {page === 0 ? (
+            {page === first ? (
+              <>
+              <Button variant="outline" disabled>
+                  <ChevronFirst/>
+              </Button>
               <Button variant="outline" disabled>
                 <ChevronLeft /> Previous
               </Button>
+              </>
             ) : (
+                <>
               <Button variant="outline" asChild>
-                <Link href={`/leaderboard/${page - 1}`}>
+
+                <Link href={`/leaderboard/${first}`} prefetch>
+                  <ChevronFirst/>
+                  </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href={`/leaderboard/${page - 1}`} prefetch>
                   <ChevronLeft /> Previous
                 </Link>
               </Button>
+                </>
             )}
-            {page === Math.ceil(leaderboard.length / PER_PAGE) - 1 ? (
+            {page === last ? (
+              <>
               <Button variant="outline" disabled>
                 Next <ChevronRight />
               </Button>
+              <Button variant="outline" disabled>
+                  <ChevronLast/>
+              </Button>
+              </>
             ) : (
+                <>
               <Button variant="outline" asChild>
-                <Link href={`/leaderboard/${page + 1}`}>
+                <Link href={`/leaderboard/${page + 1}`} prefetch>
                   Next <ChevronRight />
                 </Link>
               </Button>
+              <Button variant="outline" asChild>
+                <Link href={`/leaderboard/${last}`} prefetch>
+                  <ChevronLast/>
+                  </Link>
+              </Button>
+                </>
             )}
           </div>
         </CardFooter>

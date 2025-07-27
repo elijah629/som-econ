@@ -1,4 +1,4 @@
-import { fetchLeaderboard } from "@/lib/explorpheus";
+import { fetchLeaderboard } from "@/lib/leaderboard";
 import { calculateMetrics } from "@/lib/metrics";
 import { NextResponse } from "next/server";
 

@@ -1,5 +1,6 @@
-import { Leaderboard, Payout, PayoutType } from "@/lib/explorpheus";
+import { Payout, PayoutType } from "@/lib/explorpheus";
 import { findClosestItems } from "@/lib/shop";
+import { Leaderboard } from "./leaderboard";
 
 export interface Metrics {
   net: IoMetrics;
@@ -50,6 +51,7 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
 }
 
 export function calculateMetrics(leaderboard: Leaderboard): Metrics {
+
   const { net, transaction, shop, payout } = calculateCounts(leaderboard, 1); // good since SoM is small
   const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
   const gini = calculateGini(lorenz);
@@ -65,11 +67,11 @@ function calculateLorenz(
   const lorenzMetrics = [];
   let cumulativeShells = 0;
 
-  for (let i = 0; i < leaderboard.length; i++) {
-    const user = leaderboard[leaderboard.length - i - 1].shells;
+  for (let i = 0; i < leaderboard.users.length; i++) {
+    const user = leaderboard.users[leaderboard.users.length - i - 1].explorpheus.shells;
     cumulativeShells += user;
 
-    const population = ((i + 1) / leaderboard.length) * 100;
+    const population = ((i + 1) / leaderboard.users.length) * 100;
     const wealth = (cumulativeShells / totalShells) * 100;
 
     lorenzMetrics.push({
@@ -96,8 +98,8 @@ function calculateCounts(
   const netMap = new Map<number, { in: number; out: number; date: Date }>();
   const txMap = new Map<number, { in: number; out: number; date: Date }>();
 
-  for (const entry of leaderboard) {
-    for (const payout of entry.payouts) {
+  for (const entry of leaderboard.users) {
+    for (const payout of entry.explorpheus.payouts) {
       const date = payout.createdAt;
       const bucketStart = getBucketStart(date, rangeInDays);
       const bucketKey = bucketStart.getTime();

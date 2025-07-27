@@ -1,9 +1,9 @@
-import { RankedLeaderboard } from "@/lib/explorpheus";
 import { CountMetrics } from "@/components/count-metrics";
 import { UserLeaderboard } from "@/components/user-leaderboard";
 import { IoMetrics } from "@/lib/metrics";
 import { CurrencyPicker } from "./currency-picker";
 import { ShellUSDChart } from "./shell-usd";
+import { Leaderboard } from "@/lib/leaderboard";
 
 export function MarketMetrics({
   currency,
@@ -12,7 +12,7 @@ export function MarketMetrics({
   net,
 }: {
   currency: "USD" | "shells";
-  leaderboard: RankedLeaderboard;
+  leaderboard: Leaderboard;
   net: IoMetrics;
   transaction: IoMetrics;
 }) {
