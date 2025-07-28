@@ -41,9 +41,9 @@ export function ShopLeaderboard({
               <TableHead>Name</TableHead>
               <TableHead>Approx purchases</TableHead>
               {currency === "both" && (
-                <TableHead className="text-right">Value (shells)</TableHead>
+                <TableHead className="text-right">Value</TableHead>
               )}
-              <TableHead className="text-right">Value (USD)</TableHead>
+              <TableHead className="text-right">Value ({currency})</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
