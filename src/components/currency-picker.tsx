@@ -28,7 +28,7 @@ export function CurrencyPicker({ value }: { value: Currency }) {
         <SelectValue placeholder="shells" />
       </SelectTrigger>
       <SelectContent className="rounded-xl">
-        <SelectItem value="USD" className="rounded-lg">
+        <SelectItem value="usd" className="rounded-lg">
           USD 💵
         </SelectItem>
         <SelectItem value="shells" className="rounded-lg">
