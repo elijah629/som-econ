@@ -33,8 +33,9 @@ export default async function RootLayout({
           <Link href="/" className="font-bold text-xl">
             The SoMconomy
           </Link>
+          <Link href="/users/U092CHMLB24">Powered by @Parth Intelligence</Link>
           <nav className="ml-auto">
-            <SearchBar/>
+            <SearchBar />
           </nav>
         </header>
         {children}

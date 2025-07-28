@@ -8,8 +8,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeaderboardUser } from "@/components/user-leaderboard";
 import { fuzzysearch } from "@/lib/fuzzy";
-import { fetchLeaderboard } from "@/lib/leaderboard";
 import { notFound } from "next/navigation";
+import { fetchLeaderboard } from "@/lib/parth";
 
 export default async function Search({
   searchParams,
@@ -24,9 +24,16 @@ export default async function Search({
 
   const search = query.toLowerCase();
 
-  const { users: leaderboard, totalShells } = await fetchLeaderboard();
+  const leaderboard = await fetchLeaderboard();
+  const totalShells = leaderboard.entries.reduce((a, b) => a + b.shells, 0);
 
-  const matches = leaderboard.filter(x => fuzzysearch(search, (x.slack.display_name || x.slack.real_name || "").toLowerCase()));
+  const matches = leaderboard.entries.filter((x) =>
+    x.username &&
+    fuzzysearch(
+      search,
+      x.username.toLowerCase(),
+    ),
+  );
 
   return (
     <main className="flex flex-col gap-4">
@@ -48,7 +55,7 @@ export default async function Search({
             </TableHeader>
             <TableBody>
               {matches.map((user) => (
-                <TableRow key={user.explorpheus.slackId}>
+                <TableRow key={user.slack_id}>
                   <LeaderboardUser
                     total={totalShells}
                     user={user}

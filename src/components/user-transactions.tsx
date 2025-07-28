@@ -22,16 +22,16 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Payout } from "@/lib/explorpheus";
+import { Transaction } from "@/lib/parth";
 
 const chartConfig = {
-  amount: {
+  shellDiff: {
     label: "Amount",
   },
-  cumulative: {
+  shellsAfter: {
     label: "Cumulative Amount",
   },
-  createdAt: {
+  recorded_at: {
     label: "Created At",
   },
   type: {
@@ -42,9 +42,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const gradientOffset = (data: Payout[]) => {
-  const dataMax = Math.max(...data.map((i) => i.amount));
-  const dataMin = Math.min(...data.map((i) => i.amount));
+const gradientOffset = (data: Transaction[]) => {
+  const dataMax = Math.max(...data.map((i) => i.shellDiff));
+  const dataMin = Math.min(...data.map((i) => i.shellDiff));
 
   if (dataMax <= 0) return 0;
   if (dataMin >= 0) return 1;
@@ -52,43 +52,25 @@ const gradientOffset = (data: Payout[]) => {
   return dataMax / (dataMax - dataMin);
 };
 
-function withCumulative(payouts: Payout[]) {
-  let sum = 0;
-  return payouts
-    .slice()
-    .sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    )
-    .map((p) => {
-      sum += p.amount;
-      return {
-        ...p,
-        cumulative: sum,
-      };
-    });
-}
-
-export function UserPayouts({ payouts }: { payouts: Payout[] }) {
-  const dataWithCumulative = withCumulative(payouts);
-  const off = gradientOffset(payouts);
+export function UserTransactions({ transactions }: { transactions: Transaction[] }) {
+  const off = gradientOffset(transactions);
 
   return (
     <Card className="grow">
       <CardHeader>
-        <CardTitle>Transactions ({payouts.length})</CardTitle>
+        <CardTitle>Transactions ({transactions.length})</CardTitle>
         <CardDescription>All user Transactions</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <ComposedChart
             accessibilityLayer
-            data={dataWithCumulative}
+            data={transactions}
             margin={{ left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="createdAt"
+              dataKey="recorded_at"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -112,7 +94,7 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
             </defs>
 
             <Area
-              dataKey="amount"
+              dataKey="shellDiff"
               type="monotone"
               fill="url(#splitColor)"
               fillOpacity={0.4}
@@ -121,7 +103,7 @@ export function UserPayouts({ payouts }: { payouts: Payout[] }) {
 
             <Line
               type="monotone"
-              dataKey="cumulative"
+              dataKey="shellsAfter"
               stroke="var(--chart-1)"
               strokeWidth={2}
               dot={false}

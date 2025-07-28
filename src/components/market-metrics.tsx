@@ -3,7 +3,8 @@ import { UserLeaderboard } from "@/components/user-leaderboard";
 import { IoMetrics } from "@/lib/metrics";
 import { CurrencyPicker } from "./currency-picker";
 import { ShellUSDChart } from "./shell-usd";
-import { Leaderboard } from "@/lib/leaderboard";
+import { Currency } from "@/types/currency";
+import { Leaderboard } from "@/lib/parth";
 
 export function MarketMetrics({
   currency,
@@ -11,7 +12,7 @@ export function MarketMetrics({
   transaction,
   net,
 }: {
-  currency: "USD" | "shells";
+  currency: Currency;
   leaderboard: Leaderboard;
   net: IoMetrics;
   transaction: IoMetrics;

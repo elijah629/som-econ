@@ -17,7 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { PayoutMetrics } from "@/lib/metrics";
+import { TransactionTypeMetrics } from "@/lib/metrics";
 
 const chartConfig = {
   count: {
@@ -30,11 +30,11 @@ const chartConfig = {
   User: { label: "User" },
 } satisfies ChartConfig;
 
-export function PayoutTypes({ payout }: { payout: PayoutMetrics }) {
+export function TransactionTypes({ transactionTypes }: { transactionTypes: TransactionTypeMetrics }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Payout Types</CardTitle>
+        <CardTitle>Transaction types</CardTitle>
         <CardDescription>Collective percent of payout types</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -48,7 +48,7 @@ export function PayoutTypes({ payout }: { payout: PayoutMetrics }) {
               content={<ChartTooltipContent nameKey="type" hideLabel />}
             />
             <Pie
-              data={payout.map((x, i) => ({
+              data={transactionTypes.map((x, i) => ({
                 ...x,
                 fill: "var(--chart-" + (i + 1) + ")",
               }))}

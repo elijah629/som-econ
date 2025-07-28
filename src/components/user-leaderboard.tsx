@@ -19,7 +19,7 @@ import Image from "next/image";
 import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
 import Link from "next/link";
-import { Leaderboard, User } from "@/lib/leaderboard";
+import { Leaderboard, LeaderboardEntry } from "@/lib/parth";
 
 const AMOUNT = 12;
 
@@ -32,15 +32,16 @@ export async function UserLeaderboard({
   currency: Currency;
   total: number;
 }) {
-  const top = leaderboard.users.slice(0, AMOUNT);
-  const ttop = top.reduce((a, b) => a + b.explorpheus.shells, 0);
+  const top = leaderboard.entries.slice(0, AMOUNT);
+  const topTotal = top.reduce((a, b) => a + b.shells, 0);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>
-          Top {AMOUNT} out of {leaderboard.users.length} users with at least one transactions
+          Top {AMOUNT} out of {leaderboard.entries.length} users with at least one
+          transactions
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -56,10 +57,9 @@ export async function UserLeaderboard({
           </TableHeader>
           <TableBody>
             {top.map((user) => (
-              <TableRow key={user.explorpheus.slackId}>
+              <TableRow key={user.slack_id}>
                 <LeaderboardUser
                   total={total}
-                  key={user.explorpheus.slackId}
                   user={user}
                   currency={currency}
                 />
@@ -69,10 +69,10 @@ export async function UserLeaderboard({
               <TableCell />
               <TableCell />
               <TableCell>
-                <MonetaryValue value={ttop} currency="shells" show={currency} />
+                <MonetaryValue value={topTotal} currency="shells" show={currency} />
               </TableCell>
               <TableCell className="text-right">
-                {((ttop * 100) / total).toFixed(2)}%
+                {((topTotal * 100) / total).toFixed(2)}%
               </TableCell>
             </TableRow>
           </TableBody>
@@ -94,14 +94,13 @@ export async function UserLeaderboard({
 
 export async function LeaderboardUser({
   total,
-  user,
+  user: { rank, username, shells, pfp_url, slack_id },
   currency,
 }: {
-  user: User;
+  user: LeaderboardEntry;
   currency: Currency | "both";
   total: number;
 }) {
-  const { explorpheus: { rank, shells, slackId }, slack: { display_name, real_name, image_72 } } = user;
 
   return (
     <>
@@ -110,41 +109,33 @@ export async function LeaderboardUser({
         <Image
           unoptimized
           src={
-            image_72 ||
+            pfp_url ||
             "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-512"
           }
           className="rounded-md"
           width={64}
           height={64}
-          alt={display_name || real_name || "Unknown user"}
+          alt={username || "Unknown user"}
         />
       </TableCell>
       <TableCell>
-        <Link href={`/users/${slackId}`} className="underline">
-          {display_name || real_name || "<unknown>"}
+        <Link href={`/users/${slack_id}`} className="underline">
+          {username || "<unknown>"}
         </Link>
       </TableCell>
       {currency === "both" ? (
         <>
           <TableCell>
-            <MonetaryValue
-              value={shells}
-              currency="shells"
-              show="shells"
-            />
+            <MonetaryValue value={shells} currency="shells" show="shells" />
           </TableCell>
 
           <TableCell>
-            <MonetaryValue value={shells} currency="shells" show="USD" />
+            <MonetaryValue value={shells} currency="shells" show="usd" />
           </TableCell>
         </>
       ) : (
         <TableCell>
-          <MonetaryValue
-            value={shells}
-            currency="shells"
-            show={currency}
-          />
+          <MonetaryValue value={shells} currency="shells" show={currency} />
         </TableCell>
       )}
       <TableCell className="text-right">

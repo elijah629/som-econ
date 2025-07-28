@@ -1,4 +1,4 @@
-export type Currency = "USD" | "shells";
+export type Currency = "usd" | "shells";
 
 export function convertCurrency(
   fromValue: number,
@@ -7,7 +7,7 @@ export function convertCurrency(
 ): number {
   return fromCurrency === targetCurrency
     ? fromValue
-    : fromCurrency === "USD" && targetCurrency === "shells"
+    : fromCurrency === "usd" && targetCurrency === "shells"
       ? usdToShells(fromValue)
       : shellsToUSD(fromValue);
 }

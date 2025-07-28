@@ -1,6 +1,5 @@
-import { Payout, PayoutType } from "@/lib/explorpheus";
 import { findClosestItems } from "@/lib/shop";
-import { Leaderboard } from "./leaderboard";
+import { Leaderboard, TransactionType, Transaction } from "@/lib/parth";
 
 export interface Metrics {
   net: IoMetrics;
@@ -11,7 +10,7 @@ export interface Metrics {
 
   shop: ShopMetrics;
 
-  payout: PayoutMetrics;
+  transactionTypes: TransactionTypeMetrics
 }
 
 export type ShopMetrics = {
@@ -20,7 +19,7 @@ export type ShopMetrics = {
   value: number;
 }[];
 
-export type PayoutMetrics = { type: PayoutType; count: number }[];
+export type TransactionTypeMetrics = { type: TransactionType, count: number }[];
 
 export type LorenzMetrics = {
   population: number;
@@ -51,12 +50,11 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
 }
 
 export function calculateMetrics(leaderboard: Leaderboard): Metrics {
-
-  const { net, transaction, shop, payout } = calculateCounts(leaderboard, 1); // good since SoM is small
+  const { net, transaction, shop, transactionTypes } = calculateCounts(leaderboard, 1); // good since SoM is small
   const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
   const gini = calculateGini(lorenz);
 
-  return { net, transaction, lorenz, gini, shop, payout };
+  return { net, transaction, lorenz, gini, shop, transactionTypes };
 }
 
 // Note: data must be sorted by balance high to low for this to work
@@ -67,11 +65,12 @@ function calculateLorenz(
   const lorenzMetrics = [];
   let cumulativeShells = 0;
 
-  for (let i = 0; i < leaderboard.users.length; i++) {
-    const user = leaderboard.users[leaderboard.users.length - i - 1].explorpheus.shells;
+  for (let i = 0; i < leaderboard.entries.length; i++) {
+    const user =
+      leaderboard.entries[leaderboard.entries.length - i - 1].shells;
     cumulativeShells += user;
 
-    const population = ((i + 1) / leaderboard.users.length) * 100;
+    const population = ((i + 1) / leaderboard.entries.length) * 100;
     const wealth = (cumulativeShells / totalShells) * 100;
 
     lorenzMetrics.push({
@@ -89,18 +88,18 @@ function calculateCounts(
 ): {
   net: IoMetrics;
   transaction: IoMetrics;
+  transactionTypes: TransactionTypeMetrics;
   shop: ShopMetrics;
-  payout: PayoutMetrics;
 } {
   const purchases = new Map<string, [number, number]>();
 
-  const payoutTypes = new Map<PayoutType, number>();
+  const transactionTypes = new Map<TransactionType, number>();
   const netMap = new Map<number, { in: number; out: number; date: Date }>();
   const txMap = new Map<number, { in: number; out: number; date: Date }>();
 
-  for (const entry of leaderboard.users) {
-    for (const payout of entry.explorpheus.payouts) {
-      const date = payout.createdAt;
+  for (const entry of leaderboard.entries) {
+    for (const transaction of entry.transactions) {
+      const date = new Date(transaction.recorded_at);
       const bucketStart = getBucketStart(date, rangeInDays);
       const bucketKey = bucketStart.getTime();
 
@@ -115,16 +114,16 @@ function calculateCounts(
         date: bucketStart,
       };
 
-      payoutTypes.set(payout.type, (payoutTypes.get(payout.type) ?? 0) + 1);
+      transactionTypes.set(transaction.type, (transactionTypes.get(transaction.type) ?? 0) + 1);
 
-      if (payout.amount > 0) {
-        netEntry.in += payout.amount;
+      if (transaction.shellDiff > 0) {
+        netEntry.in += transaction.shellDiff;
         txEntry.in += 1;
       } else {
-        netEntry.out -= payout.amount;
+        netEntry.out -= transaction.shellDiff;
         txEntry.out += 1;
 
-        appendShopMetricDeltasFromPayout(payout, purchases);
+        appendShopMetricDeltasFromTransaction(transaction, purchases);
       }
 
       netMap.set(bucketKey, netEntry);
@@ -163,7 +162,7 @@ function calculateCounts(
     net,
     transaction,
     shop: buildShopMetricsFromPurchaseMap(purchases),
-    payout: Array.from(payoutTypes, ([type, count]) => ({ type, count })),
+    transactionTypes: Array.from(transactionTypes, ([type, count]) => ({ type, count })),
   };
 }
 
@@ -177,29 +176,29 @@ function buildShopMetricsFromPurchaseMap(
   })).sort((a, b) => b.purchases - a.purchases);
 }
 
-export function shopMetricsFromPayouts(payouts: Payout[]): ShopMetrics {
+export function shopMetricsFromTransactions(transactions: Transaction[]): ShopMetrics {
   const purchases = new Map<string, [number, number]>();
 
-  for (const payout of payouts) {
-    appendShopMetricDeltasFromPayout(payout, purchases);
+  for (const transaction of transactions) {
+    appendShopMetricDeltasFromTransaction(transaction, purchases);
   }
 
   return buildShopMetricsFromPurchaseMap(purchases);
 }
 
-function appendShopMetricDeltasFromPayout(
-  payout: Payout,
+function appendShopMetricDeltasFromTransaction(
+  transaction: Transaction,
   purchases: Map<string, [number, number]>,
 ) {
-  if (payout.type === "ShopOrder") {
-    const closest = findClosestItems(-payout.amount);
+  if (transaction.type === "ShopOrder") {
+    const closest = findClosestItems(-transaction.shellDiff);
 
     for (let i = 0; i < closest.length; i++) {
       const item = closest[i];
       const increment = 1 / (i + 1);
       const previous = purchases.get(item) ?? [0, 0];
 
-      purchases.set(item, [previous[0] + increment, -payout.amount]);
+      purchases.set(item, [previous[0] + increment, -transaction.shellDiff]);
     }
   }
 }

@@ -1,15 +1,21 @@
 import { MonetaryValue } from "@/components/monetary-value";
 import { ShopLeaderboard } from "@/components/shop-leaderboard";
 import { Badge } from "@/components/ui/badge";
-import { UserPayouts } from "@/components/user-payouts";
-import { fetchLeaderboard } from "@/lib/leaderboard";
-import { shopMetricsFromPayouts } from "@/lib/metrics";
+import { UserTransactions } from "@/components/user-transactions";
+import { isJourney } from "@/lib/journey";
+import { shopMetricsFromTransactions } from "@/lib/metrics";
+import { fetchLeaderboard } from "@/lib/parth";
 import Image from "next/image";
 import Link from "next/link";
 
 export async function generateStaticParams() {
-  return (await fetchLeaderboard()).users.map((x) => ({ user: x.explorpheus.slackId }));
+  return (await fetchLeaderboard()).entries.map((x) => ({
+    user: x.slack_id,
+  }));
 }
+
+export const dynamic = "force-static";
+export const dynamicParams = false;
 
 export default async function User({
   params,
@@ -17,16 +23,24 @@ export default async function User({
   params: Promise<{ user: string }>;
 }) {
   const slackId = (await params).user;
+  const leaderboard = await fetchLeaderboard();
 
-  const { users: leaderboard, totalShells } = await fetchLeaderboard();
+  // PERF: Could just use parth's user api, but it may not be in sync with the same cache.
+  const user = leaderboard.entries.find(
+    (user) => user.slack_id === slackId,
+  )!;
 
-  const user = leaderboard.find((user) => user.explorpheus.slackId === slackId)!;
-  const shopMetrics = shopMetricsFromPayouts(user.explorpheus.payouts);
+  const totalShells = leaderboard.entries.reduce((a, b) => a + b.shells, 0);
 
   const {
-    slack: { display_name, image_72, real_name },
-    explorpheus: { payouts, shells, rank }
+    username,
+    pfp_url,
+    rank,
+    shells,
+    transactions
   } = user;
+
+  const shopMetrics = shopMetricsFromTransactions(transactions);
 
   return (
     <main className="flex flex-col gap-8 w-full">
@@ -35,38 +49,32 @@ export default async function User({
           <Image
             unoptimized
             className="rounded-xl"
-            src={image_72}
+            src={pfp_url}
             width={72}
             height={72}
-            alt={display_name || real_name}
+            alt={username}
           />
           <div className="flex flex-col gap-2">
-          <span className="flex gap-2">
-            {display_name || real_name}
-            {payouts[0] &&
-              payouts[0].type !== "ShopOrder" &&
-              payouts[0].amount >= 0.1 * shells &&
-              payouts[0].createdAt <= new Date("July 9, 2025") && (
-                <Badge>Balance likely from Journey</Badge>
-              )}
-          </span>
-                 <span className="flex gap-2 items-center">
-          <MonetaryValue
-            value={shells}
-            currency="shells"
-            show="shells"
-          />{" "}
-          ≈ <MonetaryValue value={shells} currency="shells" show="USD" />
-        </span>
+            <span className="flex gap-2">
+              {username}
+              {isJourney(user) && (
+                  <Badge>Balance likely from Journey</Badge>
+                )}
+            </span>
+            <span className="flex gap-2 items-center">
+              <MonetaryValue value={shells} currency="shells" show="shells" /> ≈{" "}
+              <MonetaryValue value={shells} currency="shells" show="usd" />
+            </span>
           </div>
         </div>
 
-
         <div>Market control: {((shells * 100) / totalShells).toFixed(2)}%</div>
-        <Link href={`/leaderboard/${Math.floor(rank / 10)}`}>Show on LB (#{rank})</Link>
+        <Link href={`/leaderboard/${Math.floor(rank / 10)}`}>
+          Show on LB (#{rank})
+        </Link>
       </div>
       <div className="flex gap-8 w-full xl:flex-row flex-col">
-        <UserPayouts payouts={payouts} />
+        <UserTransactions transactions={transactions} />
         <ShopLeaderboard currency="both" shop={shopMetrics} />
       </div>
     </main>

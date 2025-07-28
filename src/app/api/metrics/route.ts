@@ -1,5 +1,5 @@
-import { fetchLeaderboard } from "@/lib/leaderboard";
 import { calculateMetrics } from "@/lib/metrics";
+import { fetchLeaderboard } from "@/lib/parth";
 import { NextResponse } from "next/server";
 
 export async function GET() {

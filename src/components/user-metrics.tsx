@@ -1,25 +1,25 @@
 import { LorenzMetrics } from "@/components/lorenz-metrics";
 import type {
   LorenzMetrics as LM,
-  PayoutMetrics,
+  TransactionTypeMetrics,
   ShopMetrics,
 } from "@/lib/metrics";
 import { ShopLeaderboard } from "@/components/shop-leaderboard";
 import { Currency } from "@/types/currency";
-import { PayoutTypes } from "./payout-types";
+import { TransactionTypes } from "./transaction-types";
 
 export function UserMetrics({
   lorenz,
   gini,
   currency,
   shop,
-  payout,
+  transactionTypes
 }: {
   lorenz: LM;
   gini: number;
   shop: ShopMetrics;
   currency: Currency;
-  payout: PayoutMetrics;
+  transactionTypes: TransactionTypeMetrics;
 }) {
   return (
     <>
@@ -28,7 +28,7 @@ export function UserMetrics({
       <div className="flex w-full flex-col xl:flex-row gap-8">
         <div className="flex flex-col gap-8 grow">
           <LorenzMetrics lorenz={lorenz} gini={gini} />
-          <PayoutTypes payout={payout} />
+          <TransactionTypes transactionTypes={transactionTypes} />
         </div>
         <ShopLeaderboard currency={currency} shop={shop} />
       </div>

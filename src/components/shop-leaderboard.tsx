@@ -53,7 +53,6 @@ export function ShopLeaderboard({
                 <TableCell>{Math.ceil(purchases)}</TableCell>
                 {currency === "both" ? (
                   <>
-                    {" "}
                     <TableCell>
                       <MonetaryValue
                         right
@@ -69,7 +68,7 @@ export function ShopLeaderboard({
                         value={value}
                         mult={purchases}
                         currency="shells"
-                        show="USD"
+                        show="usd"
                       />
                     </TableCell>
                   </>
@@ -106,7 +105,7 @@ export function ShopLeaderboard({
                       right
                       value={total}
                       currency="shells"
-                      show="USD"
+                      show="usd"
                     />
                   </TableCell>
                 </>

@@ -17,7 +17,7 @@ export function MonetaryValue({
 }) {
   const converted = convertCurrency(value, currency, show) * mult;
   const formattedAmount =
-    show === "USD" ? (
+    show === "usd" ? (
       converted.toLocaleString("en-US", {
         style: "currency",
         currency: "USD",

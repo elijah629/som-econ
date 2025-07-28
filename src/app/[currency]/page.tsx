@@ -1,15 +1,25 @@
 import { MarketMetrics } from "@/components/market-metrics";
 import { UserMetrics } from "@/components/user-metrics";
-import { fetchLeaderboard } from "@/lib/leaderboard";
 import { calculateMetrics } from "@/lib/metrics";
+import { fetchLeaderboard } from "@/lib/parth";
 import { Currency } from "@/types/currency";
 
-export default async function Statistics() {
-  const currency = "shells";
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return [
+    { currency: "usd" },
+    { currency: "shells" }
+  ]
+}
+
+export default async function Statistics({ params }: { params: Promise<{ currency: Currency }> }) {
+  const currency = (await params).currency as Currency;
 
   const leaderboard = await fetchLeaderboard();
 
-  const { net, transaction, lorenz, gini, shop, payout } =
+  const { net, transaction, lorenz, gini, shop, transactionTypes } =
     calculateMetrics(leaderboard);
 
   return (
@@ -22,14 +32,14 @@ export default async function Statistics() {
         hour
       </h3>
       <MarketMetrics
-        currency={currency as Currency}
+        currency={currency}
         leaderboard={leaderboard}
         net={net}
         transaction={transaction}
       />
       <UserMetrics
-        payout={payout}
-        currency={currency as Currency}
+        transactionTypes={transactionTypes}
+        currency={currency}
         shop={shop}
         lorenz={lorenz}
         gini={gini}
