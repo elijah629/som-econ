@@ -7,10 +7,10 @@ export interface Leaderboard {
 
 export interface LeaderboardEntry {
   slack_id: string,
-  username: string,
+  username?: string,
   shells: number,
   rank: number,
-  pfp_url: string,
+  pfp_url?: string,
   transactions: Transaction[],
 }
 
@@ -34,7 +34,7 @@ export interface Transaction {
 export async function fetchLeaderboard(): Promise<Leaderboard> {
   const lb = await fetch('https://exploresummer.livingfor.me/v1/leaderboard?pullAll=true&historicalData=true', {
     cache: "force-cache",
-    next: { revalidate: 3600 },
+    next: { revalidate: 5 * 60 },
   });
 
   return await lb.json();
