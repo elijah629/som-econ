@@ -49,14 +49,14 @@ export default async function User({
           <Image
             unoptimized
             className="rounded-xl"
-            src={pfp_url}
+            src={pfp_url || "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-512"}
             width={72}
             height={72}
-            alt={username}
+            alt={username || "Unknown user"}
           />
           <div className="flex flex-col gap-2">
             <span className="flex gap-2">
-              {username}
+              {username || "<unknown>"}
               {isJourney(user) && (
                   <Badge>Balance likely from Journey</Badge>
                 )}

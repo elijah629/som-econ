@@ -39,3 +39,31 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
 
   return await lb.json();
 }
+
+/*interface User {
+  slack_id: string,
+  username: string,
+  current_shells: number,
+  shell_history: Transaction[],
+  projects: Project[],
+
+  pfp_url: string, // 192
+  image_24: string,
+  image_32: string,
+  image_48: string,
+  image_72: string,
+  image_192:string,
+  image_512:string,
+
+}
+
+interface Project {
+  id: number,
+  title: string,
+}
+
+export async function fetchUser(slackId: string): Promise<User> {
+  const user = await fetch("https://exploresummer.livingfor.me/v1/users/details?slackId=" + slackId);
+
+  return await user.json();
+}*/
