@@ -1,10 +1,11 @@
 import { MonetaryValue } from "@/components/monetary-value";
+import { ProjectList } from "@/components/project-list";
 import { ShopLeaderboard } from "@/components/shop-leaderboard";
 import { Badge } from "@/components/ui/badge";
 import { UserTransactions } from "@/components/user-transactions";
 import { isJourney } from "@/lib/journey";
 import { shopMetricsFromTransactions } from "@/lib/metrics";
-import { fetchLeaderboard } from "@/lib/parth";
+import { fetchLeaderboard, fetchUser } from "@/lib/parth";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,7 +15,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export const dynamic = "force-static";
+export const revalidate = 300;
 export const dynamicParams = false;
 
 export default async function User({
@@ -23,22 +24,15 @@ export default async function User({
   params: Promise<{ user: string }>;
 }) {
   const slackId = (await params).user;
-  const leaderboard = await fetchLeaderboard();
-
-  // PERF: Could just use parth's user api, but it may not be in sync with the same cache.
-  const user = leaderboard.entries.find(
-    (user) => user.slack_id === slackId,
-  )!;
-
-  const totalShells = leaderboard.entries.reduce((a, b) => a + b.shells, 0);
 
   const {
-    username,
-    pfp_url,
+    image_72,
+    current_shells: shells,
     rank,
-    shells,
-    transactions
-  } = user;
+    username,
+    transactions,
+    projects,
+  } = await fetchUser(slackId);
 
   const shopMetrics = shopMetricsFromTransactions(transactions);
 
@@ -49,7 +43,7 @@ export default async function User({
           <Image
             unoptimized
             className="rounded-xl"
-            src={pfp_url || "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-512"}
+            src={image_72 || "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-72"}
             width={72}
             height={72}
             alt={username || "Unknown user"}
@@ -57,7 +51,7 @@ export default async function User({
           <div className="flex flex-col gap-2">
             <span className="flex gap-2">
               {username || "<unknown>"}
-              {isJourney(user) && (
+              {isJourney(transactions) && (
                   <Badge>Balance likely from Journey</Badge>
                 )}
             </span>
@@ -68,12 +62,12 @@ export default async function User({
           </div>
         </div>
 
-        <div>Market control: {((shells * 100) / totalShells).toFixed(2)}%</div>
         <Link href={`/leaderboard/${Math.floor(rank / 10)}`}>
           Show on LB (#{rank})
         </Link>
       </div>
       <div className="flex gap-8 w-full xl:flex-row flex-col">
+        { projects && <ProjectList projects={projects}/> }
         <UserTransactions transactions={transactions} />
         <ShopLeaderboard currency="both" shop={shopMetrics} />
       </div>

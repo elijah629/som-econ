@@ -94,7 +94,7 @@ export async function UserLeaderboard({
 
 export async function LeaderboardUser({
   total,
-  user: { rank, username, shells, pfp_url, slack_id },
+  user: { rank, username, shells, image_72, slack_id },
   currency,
 }: {
   user: LeaderboardEntry;
@@ -109,8 +109,8 @@ export async function LeaderboardUser({
         <Image
           unoptimized
           src={
-            pfp_url ||
-            "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-512"
+            image_72 ||
+            "https://ca.slack-edge.com/T0266FRGM-U015ZPLDZKQ-gf3696467c28-72"
           }
           className="rounded-md"
           width={64}

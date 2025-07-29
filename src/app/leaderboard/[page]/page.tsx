@@ -23,8 +23,8 @@ import {
 import Link from "next/link";
 import { fetchLeaderboard } from "@/lib/parth";
 
-export const dynamic = "force-static";
 export const dynamicParams = false;
+export const revalidate = 300;
 
 const PER_PAGE = 10;
 
@@ -54,10 +54,9 @@ export default async function Leaderboard({
         Summer of Making economic leaderboard
       </h1>
       <h3 className="text-center mb-8">
-        Based off of the latest data from the explorpheus API, refreshes every
-        hour
+        Based off of the latest data from Parth&apos;s API, refreshes every 5 minutes
       </h3>
-      <Card>
+      <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Leaderboard</CardTitle>
         </CardHeader>

@@ -42,6 +42,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+type NullableTx = Partial<Transaction>;
+
 const gradientOffset = (data: Transaction[]) => {
   const dataMax = Math.max(...data.map((i) => i.shellDiff));
   const dataMin = Math.min(...data.map((i) => i.shellDiff));
@@ -52,8 +54,13 @@ const gradientOffset = (data: Transaction[]) => {
   return dataMax / (dataMax - dataMin);
 };
 
+const startAtZero = (data: Transaction[]): NullableTx[] => {
+  return [...data, { shellDiff: 0, shellsBefore: 0, shellsAfter: 0 }].reverse();
+}
+
 export function UserTransactions({ transactions }: { transactions: Transaction[] }) {
   const off = gradientOffset(transactions);
+  const tx = startAtZero(transactions);
 
   return (
     <Card className="grow">
@@ -65,7 +72,7 @@ export function UserTransactions({ transactions }: { transactions: Transaction[]
         <ChartContainer config={chartConfig}>
           <ComposedChart
             accessibilityLayer
-            data={transactions}
+            data={tx}
             margin={{ left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
@@ -75,7 +82,7 @@ export function UserTransactions({ transactions }: { transactions: Transaction[]
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) =>
-                new Date(value).toLocaleDateString("en-US", {
+                value && new Date(value).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                 })

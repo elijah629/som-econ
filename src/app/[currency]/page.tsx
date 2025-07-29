@@ -4,8 +4,8 @@ import { calculateMetrics } from "@/lib/metrics";
 import { fetchLeaderboard } from "@/lib/parth";
 import { Currency } from "@/types/currency";
 
-export const dynamic = "force-static";
 export const dynamicParams = false;
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   return [
