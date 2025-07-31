@@ -13,6 +13,7 @@ export const PRICE_MAP = new Map<number, string[]>([
   [5800, ["Prusa MK4S 3D Printer"]],
   [5750, ["Prusa MK4S 3D Printer"]],
   [5612, ["13-inch M4 MacBook Air"]],
+  [4612, ["13-inch M4 MacBook Air"]],
   [5500, ["Prusa MK4S 3D Printer"]],
   [4499, ["Framework Laptop 12"]],
   [4050, ["M4 Mac Mini"]],
