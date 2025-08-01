@@ -8,6 +8,7 @@ import { shopMetricsFromTransactions } from "@/lib/metrics";
 import { fetchLeaderboard, fetchUser, zipProjects } from "@/lib/parth";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   return (await fetchLeaderboard()).entries.map((x) => ({
@@ -24,6 +25,11 @@ export default async function User({
   params: Promise<{ user: string }>;
 }) {
   const slackId = (await params).user;
+  const user = await fetchUser(slackId);
+
+  if (!user) {
+    notFound();
+  }
 
   const {
     image_72,
@@ -33,10 +39,10 @@ export default async function User({
     transactions,
     projects,
     devlogs
-  } = await fetchUser(slackId);
+  } = user;
 
   const shopMetrics = shopMetricsFromTransactions(transactions);
-  const zippedProjects = zipProjects(projects, devlogs);
+  const zippedProjects = (projects && devlogs) ? zipProjects(projects, devlogs) : [];
   const userAIChance = zippedProjects.reduce((a, b) => a + b.ai_chance, 0) / Math.max(zippedProjects.length, 1);
 
   return (

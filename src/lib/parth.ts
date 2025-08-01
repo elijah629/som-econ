@@ -50,8 +50,8 @@ export interface User {
   rank: number,
 
   transactions: Transaction[],
-  projects: Project[],
-  devlogs: Devlog[],
+  projects?: Project[],
+  devlogs?: Devlog[],
 
   pfp_url?: string,
   image_24?: string,
