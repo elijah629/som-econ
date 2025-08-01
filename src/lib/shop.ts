@@ -127,7 +127,7 @@ export const PRICE_MAP = new Map<number, string[]>([
   [80, ["Voxatron License", "Cat Printer"]],
   [79, ["E-Fidget"]],
   [75, ["Orpheus Pico! (preorder)"]],
-  [70, ["family guy seasons 1 & 2 on dvd - signed by zach latta"]],
+  // [70, ["family guy seasons 1 & 2 on dvd - signed by zach latta"]],
   [66, ["Hot Glue Gun"]],
   [65, ["128GB USB Drive"]],
   [60, ["Pico-8 License", "128GB USB Drive"]],
