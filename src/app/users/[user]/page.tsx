@@ -5,10 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { UserTransactions } from "@/components/user-transactions";
 import { isJourney } from "@/lib/journey";
 import { shopMetricsFromTransactions } from "@/lib/metrics";
-import { fetchLeaderboard, fetchUser } from "@/lib/parth";
+import { fetchLeaderboard, fetchUser, zipProjects } from "@/lib/parth";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   return (await fetchLeaderboard()).entries.map((x) => ({
@@ -33,13 +32,12 @@ export default async function User({
     username,
     transactions,
     projects,
+    devlogs
   } = await fetchUser(slackId);
 
-  if (!transactions || !shells || !rank || !username) {
-    notFound();
-  }
-
   const shopMetrics = shopMetricsFromTransactions(transactions);
+  const zippedProjects = zipProjects(projects, devlogs);
+  const userAIChance = zippedProjects.reduce((a, b) => a + b.ai_chance, 0) / Math.max(zippedProjects.length, 1);
 
   return (
     <main className="flex flex-col gap-8 w-full">
@@ -67,15 +65,17 @@ export default async function User({
           </div>
         </div>
 
+        <span>{userAIChance}% chance this user is AI</span>
+
         <Link href={`/leaderboard/${Math.floor(rank / 10)}`}>
           Show on LB (#{rank})
         </Link>
       </div>
       <div className="flex gap-8 w-full xl:flex-row flex-col">
-        { projects && <ProjectList projects={projects}/> }
         <UserTransactions transactions={transactions} />
         <ShopLeaderboard currency="both" shop={shopMetrics} />
       </div>
+        { projects && <ProjectList projects={zippedProjects}/> }
     </main>
   );
 }

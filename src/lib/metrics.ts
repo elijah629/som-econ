@@ -192,14 +192,9 @@ function appendShopMetricDeltasFromTransaction(
 ) {
   if (transaction.type === "ShopOrder") {
     const closest = findClosestItems(-transaction.shellDiff);
-
-    for (let i = 0; i < closest.length; i++) {
-      const item = closest[i];
-      const increment = 1 / (i + 1);
-      const previous = purchases.get(item) ?? [0, 0];
-
-      purchases.set(item, [previous[0] + increment, -transaction.shellDiff]);
-    }
+    const name = closest.join(" / ");
+    const previous = purchases.get(name) ?? [0, 0];
+    purchases.set(name, [previous[0] + 1, -transaction.shellDiff]);
   }
 }
 
