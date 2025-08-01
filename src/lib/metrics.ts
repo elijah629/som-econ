@@ -191,10 +191,13 @@ function appendShopMetricDeltasFromTransaction(
   purchases: Map<string, [number, number]>,
 ) {
   if (transaction.type === "ShopOrder") {
-    const closest = findClosestItems(-transaction.shellDiff);
-    const name = closest.join(" / ");
-    const previous = purchases.get(name) ?? [0, 0];
-    purchases.set(name, [previous[0] + 1, -transaction.shellDiff]);
+    const closest = PRICE_MAP.get(-transaction.shellDiff);
+
+    if (closest) {
+      const name = closest.join(" / ");
+      const previous = purchases.get(name) ?? [0, 0];
+      purchases.set(name, [previous[0] + 1, -transaction.shellDiff]);
+    }
   }
 }
 
