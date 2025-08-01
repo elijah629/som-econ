@@ -8,6 +8,7 @@ import { shopMetricsFromTransactions } from "@/lib/metrics";
 import { fetchLeaderboard, fetchUser } from "@/lib/parth";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   return (await fetchLeaderboard()).entries.map((x) => ({
@@ -33,6 +34,10 @@ export default async function User({
     transactions,
     projects,
   } = await fetchUser(slackId);
+
+  if (!transactions || !shells || !rank || !username) {
+    notFound();
+  }
 
   const shopMetrics = shopMetricsFromTransactions(transactions);
 
