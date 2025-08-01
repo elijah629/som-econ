@@ -10,14 +10,11 @@ export function ProjectList({ projects }: { projects: ZippedProject[] }) {
     </CardHeader>
     <CardContent>
       <ul className="flex gap-8 flex-col">
-        {projects.map(project => /*<li key={x.id}>
-          <Link className="underline" href={"https://summer.hackclub.com/projects/" + x.id}>{x.title} {x.ai_chance}</Link>
-          {x.devlogs.length}
-        </li>*/
+        {projects.map(project =>
           <Card key={project.id}>
     <CardHeader>
       <CardTitle>
-          <Link className="underline" href={"/projects/" + project.id}>{project.title}</Link>
+          <Link className="underline" href={"https://summer.hackclub.com/projects/" + project.id}>{project.title}</Link>
         </CardTitle>
       <CardDescription>{project.ai_chance}% chance of AI</CardDescription>
     </CardHeader>
