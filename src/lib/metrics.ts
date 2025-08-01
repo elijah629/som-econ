@@ -1,4 +1,4 @@
-import { findClosestItems } from "@/lib/shop";
+import { PRICE_MAP } from "@/lib/shop";
 import { Leaderboard, TransactionType, Transaction } from "@/lib/parth";
 
 export interface Metrics {
