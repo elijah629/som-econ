@@ -1,7 +1,3 @@
-export function findClosestItems(price: number): string[] {
-  return PRICE_MAP.get(price) ?? [];
-}
-
 export const PRICE_MAP = new Map<number, string[]>([
   [12665, ["MacBook Pro"]],
   [11075, ["MacBook Pro"]],
