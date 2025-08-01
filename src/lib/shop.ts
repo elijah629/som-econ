@@ -101,7 +101,10 @@ export const PRICE_MAP = new Map<number, string[]>([
   [130, ["$20 Bambu Lab Credits"]],
   [125, ["256GB USB Drive", "Orpheus Pico! (preorder)"]],
   [122, ["USB C Cable + Wall Adapter"]],
-  [120, ["256GB USB Drive"]],
+  [120, [
+    "256GB USB Drive",
+    "family guy seasons 1 & 2 on dvd - signed by zach latta"
+  ]],
   [115, ["256GB USB Drive", "sketch from msw"]],
   [110, ["256GB microSD card + adapter", "sketch from msw"]],
   [103, ["$20 Framework credit"]],
@@ -124,6 +127,7 @@ export const PRICE_MAP = new Map<number, string[]>([
   [80, ["Voxatron License", "Cat Printer"]],
   [79, ["E-Fidget"]],
   [75, ["Orpheus Pico! (preorder)"]],
+  [70, ["family guy seasons 1 & 2 on dvd - signed by zach latta"]],
   [66, ["Hot Glue Gun"]],
   [65, ["128GB USB Drive"]],
   [60, ["Pico-8 License", "128GB USB Drive"]],
