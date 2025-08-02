@@ -20,8 +20,10 @@ import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
 import Link from "next/link";
 import { Leaderboard, LeaderboardEntry } from "@/lib/parth";
+import { Button } from "./ui/button";
+import { ChevronDown } from "lucide-react";
 
-const AMOUNT = 12;
+const AMOUNT = 10;
 
 export async function UserLeaderboard({
   leaderboard,
@@ -40,8 +42,8 @@ export async function UserLeaderboard({
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>
-          Top {AMOUNT} out of {leaderboard.entries.length} users with at least one
-          transactions
+          Top {AMOUNT} out of {leaderboard.entries.length} users with at least
+          one transactions
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,8 +70,13 @@ export async function UserLeaderboard({
             <TableRow>
               <TableCell />
               <TableCell />
+              <TableCell />
               <TableCell>
-                <MonetaryValue value={topTotal} currency="shells" show={currency} />
+                <MonetaryValue
+                  value={topTotal}
+                  currency="shells"
+                  show={currency}
+                />
               </TableCell>
               <TableCell className="text-right">
                 {((topTotal * 100) / total).toFixed(2)}%
@@ -78,13 +85,13 @@ export async function UserLeaderboard({
           </TableBody>
         </Table>
         <CardFooter>
-          <div className="w-full text-center">
-            <Link
-              href="/leaderboard/0"
-              className="hover:underline text-blue-500"
-            >
-              Show all
-            </Link>
+          <div className="w-full text-center mt-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/leaderboard/0">
+                <ChevronDown />
+                Show all
+              </Link>
+            </Button>
           </div>
         </CardFooter>
       </CardContent>
@@ -101,7 +108,6 @@ export async function LeaderboardUser({
   currency: Currency | "both";
   total: number;
 }) {
-
   return (
     <>
       <TableCell className="font-bold">#{rank}</TableCell>

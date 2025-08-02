@@ -30,7 +30,11 @@ const chartConfig = {
   User: { label: "User" },
 } satisfies ChartConfig;
 
-export function TransactionTypes({ transactionTypes }: { transactionTypes: TransactionTypeMetrics }) {
+export function TransactionTypes({
+  transactionTypes,
+}: {
+  transactionTypes: TransactionTypeMetrics;
+}) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">

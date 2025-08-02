@@ -27,12 +27,8 @@ export default async function Search({
   const leaderboard = await fetchLeaderboard();
   const totalShells = leaderboard.entries.reduce((a, b) => a + b.shells, 0);
 
-  const matches = leaderboard.entries.filter((x) =>
-    x.username &&
-    fuzzysearch(
-      search,
-      x.username.toLowerCase(),
-    ),
+  const matches = leaderboard.entries.filter(
+    (x) => x.username && fuzzysearch(search, x.username.toLowerCase()),
   );
 
   return (

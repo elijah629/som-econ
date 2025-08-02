@@ -10,7 +10,7 @@ export interface Metrics {
 
   shop: ShopMetrics;
 
-  transactionTypes: TransactionTypeMetrics
+  transactionTypes: TransactionTypeMetrics;
 }
 
 export type ShopMetrics = {
@@ -19,7 +19,7 @@ export type ShopMetrics = {
   value: number;
 }[];
 
-export type TransactionTypeMetrics = { type: TransactionType, count: number }[];
+export type TransactionTypeMetrics = { type: TransactionType; count: number }[];
 
 export type LorenzMetrics = {
   population: number;
@@ -50,7 +50,10 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
 }
 
 export function calculateMetrics(leaderboard: Leaderboard): Metrics {
-  const { net, transaction, shop, transactionTypes } = calculateCounts(leaderboard, 1); // good since SoM is small
+  const { net, transaction, shop, transactionTypes } = calculateCounts(
+    leaderboard,
+    1,
+  ); // good since SoM is small
   const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
   const gini = calculateGini(lorenz);
 
@@ -66,8 +69,7 @@ function calculateLorenz(
   let cumulativeShells = 0;
 
   for (let i = 0; i < leaderboard.entries.length; i++) {
-    const user =
-      leaderboard.entries[leaderboard.entries.length - i - 1].shells;
+    const user = leaderboard.entries[leaderboard.entries.length - i - 1].shells;
     cumulativeShells += user;
 
     const population = ((i + 1) / leaderboard.entries.length) * 100;
@@ -114,7 +116,10 @@ function calculateCounts(
         date: bucketStart,
       };
 
-      transactionTypes.set(transaction.type, (transactionTypes.get(transaction.type) ?? 0) + 1);
+      transactionTypes.set(
+        transaction.type,
+        (transactionTypes.get(transaction.type) ?? 0) + 1,
+      );
 
       if (transaction.shellDiff > 0) {
         netEntry.in += transaction.shellDiff;
@@ -162,7 +167,10 @@ function calculateCounts(
     net,
     transaction,
     shop: buildShopMetricsFromPurchaseMap(purchases),
-    transactionTypes: Array.from(transactionTypes, ([type, count]) => ({ type, count })),
+    transactionTypes: Array.from(transactionTypes, ([type, count]) => ({
+      type,
+      count,
+    })),
   };
 }
 
@@ -176,7 +184,9 @@ function buildShopMetricsFromPurchaseMap(
   })).sort((a, b) => b.purchases - a.purchases);
 }
 
-export function shopMetricsFromTransactions(transactions: Transaction[]): ShopMetrics {
+export function shopMetricsFromTransactions(
+  transactions: Transaction[],
+): ShopMetrics {
   const purchases = new Map<string, [number, number]>();
 
   for (const transaction of transactions) {

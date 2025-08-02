@@ -92,8 +92,8 @@ export function CountMetrics({
 
   return (
     <Card className="py-0 grow">
-      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
+      <CardHeader className="flex flex-col items-stretch border-b !p-0 xs:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 xs:!py-0">
           <CardTitle>Market I/O</CardTitle>
           <CardDescription>
             Incoming, Outgoing, and Total for Net and Transaction values.
@@ -107,13 +107,13 @@ export function CountMetrics({
               <button
                 key={chart}
                 data-active={activeChart === chart}
-                className="data-[active=true]:bg-muted/50 relative cursor-pointer z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
+                className="data-[active=true]:bg-muted/50 relative cursor-pointer z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l xs:border-t-0 xs:border-l xs:px-8 xs:py-6"
                 onClick={() => setActiveChart(chart)}
               >
                 <span className="text-muted-foreground text-xs">
                   {chartLabels[chart]}
                 </span>
-                <span className="text-lg leading-none items-center flex gap-2 font-bold sm:text-3xl">
+                <span className="text-lg leading-none items-center flex gap-2 font-bold xs:text-3xl">
                   {currencies[chart] ? (
                     <span className="mr-7">
                       <MonetaryValue
@@ -137,7 +137,7 @@ export function CountMetrics({
           })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent className="px-2 xs:p-6">
         <ChartContainer config={chartConfig[activeChart]}>
           <ComposedChart
             accessibilityLayer
@@ -186,8 +186,6 @@ export function CountMetrics({
             />
             <Line
               dataKey="total"
-              //type="monotone"
-              //strokeWidth={2}
               yAxisId="b"
               opacity={0}
               dot={false}

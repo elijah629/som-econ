@@ -43,19 +43,16 @@ export default async function Leaderboard({
   const leaderboard = await fetchLeaderboard();
   const totalShells = leaderboard.entries.reduce((a, b) => a + b.shells, 0);
 
-  const slice = leaderboard.entries.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
+  const slice = leaderboard.entries.slice(
+    page * PER_PAGE,
+    (page + 1) * PER_PAGE,
+  );
 
   const first = 0;
   const last = Math.ceil(leaderboard.entries.length / PER_PAGE) - 1;
 
   return (
     <main>
-      <h1 className="text-3xl font-bold mb-3 text-center">
-        Summer of Making economic leaderboard
-      </h1>
-      <h3 className="text-center mb-8">
-        Based off of the latest data from Parth&apos;s API, refreshes every 5 minutes
-      </h3>
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Leaderboard</CardTitle>

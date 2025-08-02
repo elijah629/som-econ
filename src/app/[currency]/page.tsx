@@ -8,13 +8,14 @@ export const dynamicParams = false;
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  return [
-    { currency: "usd" },
-    { currency: "shells" }
-  ]
+  return [{ currency: "usd" }, { currency: "shells" }];
 }
 
-export default async function Statistics({ params }: { params: Promise<{ currency: Currency }> }) {
+export default async function Statistics({
+  params,
+}: {
+  params: Promise<{ currency: Currency }>;
+}) {
   const currency = (await params).currency as Currency;
 
   const leaderboard = await fetchLeaderboard();
@@ -24,13 +25,7 @@ export default async function Statistics({ params }: { params: Promise<{ currenc
 
   return (
     <main>
-      <h1 className="text-3xl font-bold mb-3 text-center">
-        Summer of Making economic measurements
-      </h1>
-      <h3 className="text-center mb-8">
-        Based off of the latest data from the explorpheus API, refreshes every
-        hour
-      </h3>
+
       <MarketMetrics
         currency={currency}
         leaderboard={leaderboard}
