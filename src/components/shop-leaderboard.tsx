@@ -47,7 +47,7 @@ export function ShopLeaderboard({
                 </>
               ) : (
                 <TableHead className="text-right">Value ({currency})</TableHead>
-              )}{" "}
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>

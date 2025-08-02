@@ -1,3 +1,5 @@
+import { fetchCachetUser } from "./cachet";
+
 export interface Leaderboard {
   entries: LeaderboardEntry[];
   page: number;
@@ -42,7 +44,23 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
     },
   );
 
-  return await lb.json();
+  const raw: Leaderboard = await lb.json();
+
+  // we need to set username using cachet for all entries without a username.
+
+  const filled = await Promise.all(raw.entries.map(async x => {
+    if (x.username) {
+      return x;
+    }
+
+    const cachet = await fetchCachetUser(x.slack_id);
+
+    x.username = cachet.displayName;
+
+    return x;
+  }));
+
+  return { ...raw, entries: filled };
 }
 
 export interface User {

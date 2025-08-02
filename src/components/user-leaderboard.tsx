@@ -145,7 +145,6 @@ export async function LeaderboardUser({
         </TableCell>
       )}
       <TableCell className="text-right">
-        {" "}
         {((shells * 100) / total).toFixed(2)}%
       </TableCell>
     </>
