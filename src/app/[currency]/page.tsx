@@ -25,7 +25,6 @@ export default async function Statistics({
 
   return (
     <main>
-
       <MarketMetrics
         currency={currency}
         leaderboard={leaderboard}

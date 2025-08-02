@@ -40,12 +40,15 @@ export function ShopLeaderboard({
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Approx purchases</TableHead>
-              {currency === "both" && (<>
-                <TableHead className="text-right">Value (shells)</TableHead>
- <TableHead className="text-right">Value (USD)</TableHead>
-      </>        ) :
-              <TableHead className="text-right">Value ({currency})</TableHead>
-          }  </TableRow>
+              {currency === "both" ? (
+                <>
+                  <TableHead className="text-right">Value (shells)</TableHead>
+                  <TableHead className="text-right">Value (USD)</TableHead>
+                </>
+              ) : (
+                <TableHead className="text-right">Value ({currency})</TableHead>
+              )}{" "}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {shop.map(({ name, purchases, value }) => (

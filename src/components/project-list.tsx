@@ -58,19 +58,27 @@ export function ProjectList({ projects }: { projects: ZippedProject[] }) {
                   <CardContent>
                     <ul className="flex flex-col gap-4">
                       {project.devlogs.map((devlog) => (
-                        <Link href={"https://summer.hackclub.com/projects/" + devlog.project_id + "#devlog_" + devlog.id} key={devlog.id}>
-                        <Card>
-                          <CardHeader>
-                            <CardDescription>
-                              {devlog.ai_chance.toFixed(2)}% chance AI
-                            </CardDescription>
-                          </CardHeader>
+                        <Link
+                          href={
+                            "https://summer.hackclub.com/projects/" +
+                            devlog.project_id +
+                            "#devlog_" +
+                            devlog.id
+                          }
+                          key={devlog.id}
+                        >
+                          <Card>
+                            <CardHeader>
+                              <CardDescription>
+                                {devlog.ai_chance.toFixed(2)}% chance AI
+                              </CardDescription>
+                            </CardHeader>
                             <CardContent>
                               <pre className="whitespace-pre-wrap break-words">
                                 {devlog.text}
                               </pre>
                             </CardContent>
-                        </Card>
+                          </Card>
                         </Link>
                       ))}
                     </ul>
