@@ -48,17 +48,19 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
 
   // we need to set username using cachet for all entries without a username.
 
-  const filled = await Promise.all(raw.entries.map(async x => {
-    if (x.username) {
+  const filled = await Promise.all(
+    raw.entries.map(async (x) => {
+      if (x.username) {
+        return x;
+      }
+
+      const cachet = await fetchCachetUser(x.slack_id);
+
+      x.username = cachet.displayName;
+
       return x;
-    }
-
-    const cachet = await fetchCachetUser(x.slack_id);
-
-    x.username = cachet.displayName;
-
-    return x;
-  }));
+    }),
+  );
 
   return { ...raw, entries: filled };
 }
@@ -128,7 +130,7 @@ export function zipProjects(
 }
 
 export async function fetchUser(slackId: string): Promise<User> {
-  const user = await fetch(
+  const users = await fetch(
     "https://exploresummer.livingfor.me/v1/users/details?slackId=" + slackId,
     {
       cache: "force-cache",
@@ -136,7 +138,17 @@ export async function fetchUser(slackId: string): Promise<User> {
     },
   );
 
-  return (await user.json())[0];
+  const user: User = (await users.json())[0];
+
+  if (user.username) {
+    return user;
+  }
+
+  const cachet = await fetchCachetUser(user.slack_id);
+
+  user.username = cachet.displayName;
+
+  return user;
 }
 
 export async function highestProjectID(): Promise<number> {
