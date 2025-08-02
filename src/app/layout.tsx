@@ -42,16 +42,17 @@ export default async function RootLayout({
             <SearchBar />
           </nav>
         </header>
+        <div className="flex justify-around w-full my-2">
+<Link href="https://summer.hackclub.com/projects/7217">Summer The Explorer for API</Link>
+<Link href="https://summer.hackclub.com/projects/8258">sonai for AI detection</Link>
+        </div>
       <h1 className="text-3xl font-bold mb-3 text-center">
         Summer of Making economic measurements
       </h1>
       <h3 className="text-center mb-8">
         Based off of the latest data from Parth&apos;s API, refreshes every 5 minutes
       </h3>
-        <div className="flex justify-around w-full">
-<Link href="https://summer.hackclub.com/projects/7217">Summer The Explorer for APi</Link>
-<Link href="https://summer.hackclub.com/projects/8258">sonai for AI detection</Link>
-        </div>
+
         {children}
       </body>
     </html>
