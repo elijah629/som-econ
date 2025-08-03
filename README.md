@@ -3,7 +3,7 @@
 The SoMconomy is booming! By how much you ask? `som-econ` has the answer!
 
 `som-econ` includes comprehensive graphs for the SoM economy including: Net
-Worth and Transactons over time, Lorenz curve, Gini Number, transaction types,
+Worth and Transactions over time, Lorenz curve, Gini Number, transaction types,
 and an estimated count of bought shop items. It includes all of that AND every
 price in USD through a custom USD-shells estimator.
 
