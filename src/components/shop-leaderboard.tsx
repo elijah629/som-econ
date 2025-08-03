@@ -54,7 +54,7 @@ export function ShopLeaderboard({
           <TableBody>
             {shop.map(({ name, purchases, value }) => (
               <TableRow key={name}>
-                <TableCell>{name}</TableCell>
+                <TableCell className="whitespace-normal break-words">{name}</TableCell>
                 <TableCell>{purchases}</TableCell>
                 {currency === "both" ? (
                   <>
