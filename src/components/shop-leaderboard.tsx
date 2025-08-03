@@ -24,7 +24,8 @@ export function ShopLeaderboard({
   shop: ShopMetrics;
   currency: Currency | "both";
 }) {
-  const total = shop.reduce((a, b) => a + b.value * b.purchases, 0);
+  const totalValue = shop.reduce((a, b) => a + (b.value * b.purchases), 0);
+  const totalPurchases = shop.reduce((a, b) => a + b.purchases, 0);
 
   return (
     <Card>
@@ -54,7 +55,7 @@ export function ShopLeaderboard({
             {shop.map(({ name, purchases, value }) => (
               <TableRow key={name}>
                 <TableCell>{name}</TableCell>
-                <TableCell>{Math.ceil(purchases)}</TableCell>
+                <TableCell>{purchases}</TableCell>
                 {currency === "both" ? (
                   <>
                     <TableCell>
@@ -92,14 +93,14 @@ export function ShopLeaderboard({
             <TableRow>
               <TableCell className="font-bold">Total</TableCell>
               <TableCell>
-                {Math.ceil(shop.reduce((a, b) => a + b.purchases, 0))}
+                {totalPurchases}
               </TableCell>
               {currency === "both" ? (
                 <>
                   <TableCell>
                     <MonetaryValue
                       right
-                      value={total}
+                      value={totalValue}
                       currency="shells"
                       show="shells"
                     />
@@ -107,7 +108,7 @@ export function ShopLeaderboard({
                   <TableCell>
                     <MonetaryValue
                       right
-                      value={total}
+                      value={totalValue}
                       currency="shells"
                       show="usd"
                     />
@@ -117,7 +118,7 @@ export function ShopLeaderboard({
                 <TableCell>
                   <MonetaryValue
                     right
-                    value={total}
+                    value={totalValue}
                     currency="shells"
                     show={currency}
                   />

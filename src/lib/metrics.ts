@@ -54,7 +54,7 @@ export function calculateMetrics(leaderboard: Leaderboard): Metrics {
     leaderboard,
     1,
   ); // good since SoM is small
-  const lorenz = calculateLorenz(leaderboard, net.at(-1)!.cumulativeTotal);
+  const lorenz = calculateLorenz(leaderboard);
   const gini = calculateGini(lorenz);
 
   return { net, transaction, lorenz, gini, shop, transactionTypes };
@@ -63,17 +63,29 @@ export function calculateMetrics(leaderboard: Leaderboard): Metrics {
 // Note: data must be sorted by balance high to low for this to work
 function calculateLorenz(
   leaderboard: Leaderboard,
-  totalShells: number,
 ): LorenzMetrics {
   const lorenzMetrics = [];
+  let netIn = 0;
+
+  for (let i = 0; i < leaderboard.entries.length; i++) {
+    if (leaderboard.entries[i].shells > 0) {
+      netIn += leaderboard.entries[i].shells;
+    }
+  }
+
   let cumulativeShells = 0;
 
   for (let i = 0; i < leaderboard.entries.length; i++) {
     const user = leaderboard.entries[leaderboard.entries.length - i - 1].shells;
+
+    if (user <= 0) {
+      continue;
+    }
+
     cumulativeShells += user;
 
     const population = ((i + 1) / leaderboard.entries.length) * 100;
-    const wealth = (cumulativeShells / totalShells) * 100;
+    const wealth = (cumulativeShells / netIn) * 100;
 
     lorenzMetrics.push({
       population,
@@ -116,10 +128,12 @@ function calculateCounts(
         date: bucketStart,
       };
 
-      transactionTypes.set(
-        transaction.type,
-        (transactionTypes.get(transaction.type) ?? 0) + 1,
-      );
+      if (transaction.shellDiff) { // +0 and -0
+        transactionTypes.set(
+          transaction.type,
+          (transactionTypes.get(transaction.type) ?? 0) + 1,
+        );
+      }
 
       if (transaction.shellDiff > 0) {
         netEntry.in += transaction.shellDiff;

@@ -40,7 +40,7 @@ export function LorenzMetrics({
       <CardHeader>
         <CardTitle>Wealth distribution</CardTitle>
         <CardDescription>
-          Lorenz chart of current wealth. Bottom X% controls Y% of wealth
+          Lorenz chart of current wealth. Bottom X% controls Y% of wealth. Negative and zero balances have been excluded.
         </CardDescription>
       </CardHeader>
       <CardContent>

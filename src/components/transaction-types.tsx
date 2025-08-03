@@ -39,7 +39,7 @@ export function TransactionTypes({
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Transaction types</CardTitle>
-        <CardDescription>Collective percent of payout types</CardDescription>
+        <CardDescription>Collective percent of transaction types</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
