@@ -24,7 +24,7 @@ export function ShopLeaderboard({
   shop: ShopMetrics;
   currency: Currency | "both";
 }) {
-  const totalValue = shop.reduce((a, b) => a + (b.value * b.purchases), 0);
+  const totalValue = shop.reduce((a, b) => a + b.value * b.purchases, 0);
   const totalPurchases = shop.reduce((a, b) => a + b.purchases, 0);
 
   return (
@@ -54,7 +54,9 @@ export function ShopLeaderboard({
           <TableBody>
             {shop.map(({ name, purchases, value }) => (
               <TableRow key={name}>
-                <TableCell className="whitespace-normal break-words">{name}</TableCell>
+                <TableCell className="whitespace-normal break-words">
+                  {name}
+                </TableCell>
                 <TableCell>{purchases}</TableCell>
                 {currency === "both" ? (
                   <>
@@ -92,9 +94,7 @@ export function ShopLeaderboard({
             ))}
             <TableRow>
               <TableCell className="font-bold">Total</TableCell>
-              <TableCell>
-                {totalPurchases}
-              </TableCell>
+              <TableCell>{totalPurchases}</TableCell>
               {currency === "both" ? (
                 <>
                   <TableCell>

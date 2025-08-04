@@ -61,9 +61,7 @@ export function calculateMetrics(leaderboard: Leaderboard): Metrics {
 }
 
 // Note: data must be sorted by balance high to low for this to work
-function calculateLorenz(
-  leaderboard: Leaderboard,
-): LorenzMetrics {
+function calculateLorenz(leaderboard: Leaderboard): LorenzMetrics {
   const lorenzMetrics = [];
   let netIn = 0;
 
@@ -128,7 +126,8 @@ function calculateCounts(
         date: bucketStart,
       };
 
-      if (transaction.shellDiff) { // +0 and -0
+      if (transaction.shellDiff) {
+        // +0 and -0
         transactionTypes.set(
           transaction.type,
           (transactionTypes.get(transaction.type) ?? 0) + 1,

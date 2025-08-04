@@ -21,6 +21,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  CustomTooltipProps,
 } from "@/components/ui/chart";
 import { Transaction } from "@/lib/parth";
 
@@ -96,7 +97,9 @@ export function UserTransactions({
             <YAxis />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+              content={(props: CustomTooltipProps) => (
+                <ChartTooltipContent {...props} indicator="line" />
+              )}
             />
             <defs>
               <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">

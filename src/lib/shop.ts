@@ -20,7 +20,14 @@ export const PRICE_MAP = new Map<number, string[]>([
   [2100, ["Bambu Labs A1"]],
   [1915, ["CMF Phone 2 Pro (White/Black)"]],
   [1820, ["Bose QuietComfort 45"]],
-  [1800, ["Nebula.tv Lifetime subscription", "Bambu Labs A1", "BM: Lenovo Thinkpad X1 Carbon Gen 8 (Refurbished)"]],
+  [
+    1800,
+    [
+      "Nebula.tv Lifetime subscription",
+      "Bambu Labs A1",
+      "BM: Lenovo Thinkpad X1 Carbon Gen 8 (Refurbished)",
+    ],
+  ],
   [1790, ["CMF Phone 2 Pro (White/Black)"]],
   [1775, ["Bambu Labs A1"]],
   [1750, ["$500 in Amp credit", "Bambu Labs A1"]],
@@ -87,7 +94,10 @@ export const PRICE_MAP = new Map<number, string[]>([
   [162, ["Dupont Crimping Tool Kit"]],
   [160, ["Gold Verified"]],
   [155, ["Cat Printer"]],
-  [150, ["Offshore Bank Account", "Orpheus Pico", "BM: poignant guide to ruby"]],
+  [
+    150,
+    ["Offshore Bank Account", "Orpheus Pico", "BM: poignant guide to ruby"],
+  ],
   [147, ["CH341A Programmer"]],
   [145, ["USB C Cable + Wall Adapter"]],
   [144, ["Pinecil"]],
@@ -128,7 +138,14 @@ export const PRICE_MAP = new Map<number, string[]>([
   // [70, ["family guy seasons 1 & 2 on dvd - signed by zach latta"]],
   [66, ["Hot Glue Gun"]],
   [65, ["128GB USB Drive"]],
-  [60, ["Pico-8 License", "128GB USB Drive", "$10 Purely mail yearly subscription"]],
+  [
+    60,
+    [
+      "Pico-8 License",
+      "128GB USB Drive",
+      "$10 Purely mail yearly subscription",
+    ],
+  ],
   [55, ["128GB USB Drive"]],
   [50, ["$10 Server hosting credits", "Logic Analyzer"]],
   [45, ["64GB USB Drive", "Domain grant"]],

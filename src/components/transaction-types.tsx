@@ -12,17 +12,13 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
+  CustomTooltipProps,
 } from "@/components/ui/chart";
 import { TransactionTypeMetrics } from "@/lib/metrics";
 
 const chartConfig = {
-  count: {
-    label: "Count",
-  },
   ShopOrder: {
     label: "Shop Order",
   },
@@ -39,7 +35,9 @@ export function TransactionTypes({
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Transaction types</CardTitle>
-        <CardDescription>Collective percent of transaction types</CardDescription>
+        <CardDescription>
+          Collective percent of transaction types
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -49,19 +47,22 @@ export function TransactionTypes({
           <PieChart>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent nameKey="type" hideLabel />}
+              content={(props: CustomTooltipProps) => (
+                <ChartTooltipContent {...props} nameKey="type" hideLabel />
+              )}
             />
             <Pie
-              data={transactionTypes.map((x, i) => ({
-                ...x,
-                fill: "var(--chart-" + (i + 1) + ")",
-              }))}
+              data={transactionTypes.map(
+                (x, i) => (
+                  console.log(x),
+                  {
+                    ...x,
+                    fill: "var(--chart-" + (i + 1) + ")",
+                  }
+                ),
+              )}
               dataKey="count"
               nameKey="type"
-            />
-            <ChartLegend
-              content={<ChartLegendContent nameKey="type" />}
-              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
             />
           </PieChart>
         </ChartContainer>

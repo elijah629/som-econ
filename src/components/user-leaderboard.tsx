@@ -125,7 +125,10 @@ export async function LeaderboardUser({
         />
       </TableCell>
       <TableCell>
-        <Link href={`/users/${slack_id}`} className="underline">
+        <Link
+          href={`/users/${slack_id}`}
+          className="underline whitespace-normal break-words"
+        >
           {username || "<unknown>"}
         </Link>
       </TableCell>
