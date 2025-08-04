@@ -218,8 +218,9 @@ export function ShellUSDChart() {
               />
               <ChartTooltip
                 cursor={false}
-                content={
+                content={(props) =>
                   <ChartTooltipContent
+                    {...props}
                     nameKey="usd"
                     labelFormatter={(
                       _,
@@ -235,7 +236,7 @@ export function ShellUSDChart() {
                         show="shells"
                       />
                     )}
-                  />
+                    />
                 }
               />
               <Line dataKey="usd" type="linear" strokeWidth={2} dot={false} />

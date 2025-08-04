@@ -52,15 +52,7 @@ export function TransactionTypes({
               )}
             />
             <Pie
-              data={transactionTypes.map(
-                (x, i) => (
-                  console.log(x),
-                  {
-                    ...x,
-                    fill: "var(--chart-" + (i + 1) + ")",
-                  }
-                ),
-              )}
+              data={transactionTypes.map((x, i) => ({ ...x, fill: "var(--chart-" + (i + 1) + ")" }))}
               dataKey="count"
               nameKey="type"
             />

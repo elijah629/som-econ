@@ -15,6 +15,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  CustomTooltipProps,
 } from "@/components/ui/chart";
 import type { LorenzMetrics } from "@/lib/metrics";
 import { cn } from "@/lib/utils";
@@ -64,7 +65,7 @@ export function LorenzMetrics({
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={(props: CustomTooltipProps) => <ChartTooltipContent {...props} hideLabel />}
             />
             <Line
               dataKey="wealth"

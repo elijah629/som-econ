@@ -16,6 +16,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  CustomTooltipProps,
 } from "@/components/ui/chart";
 import { Currency } from "@/types/currency";
 import { MonetaryValue } from "./monetary-value";
@@ -164,7 +165,7 @@ export function CountMetrics({
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
+              content={(props: CustomTooltipProps) => <ChartTooltipContent {...props} indicator="dot" />}
             />
             <Area
               dataKey="in"
