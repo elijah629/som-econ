@@ -43,7 +43,7 @@ const shellsUSD = [
   [144, 35.99],
   [145, 38],
   [147, 9.99],
-  [150, 0], // offshore bank
+  [150, 24.99], // offshore bank, but ultrakill
   [162, 31.98],
   [160, 0], // SoM Mgold
   [170, 25],

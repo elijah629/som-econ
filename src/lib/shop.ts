@@ -34,6 +34,7 @@ export const PRICE_MAP = new Map<number, string[]>([
   [1740, ['Lenovo ThinkPad T14 14" Laptop']],
   [1640, ["CMF Phone 2 Pro (White/Black)"]],
   [1632, ["100MHZ Oscilloscope"]],
+  [1595, ["BM: Dell Latitude 14\" Laptop Core i5 4.2GHz 16GB RAM 512GB SSD"]],
   [
     1540,
     ["CMF Phone 2 Pro (White/Black)", "ThinkPad X1 Carbon 6th Gen (Renewed)"],
@@ -96,7 +97,7 @@ export const PRICE_MAP = new Map<number, string[]>([
   [155, ["Cat Printer"]],
   [
     150,
-    ["Offshore Bank Account", "Orpheus Pico", "BM: poignant guide to ruby"],
+    ["Offshore Bank Account", "Orpheus Pico", "BM: poignant guide to ruby", "BM: ULTRAKILL"],
   ],
   [147, ["CH341A Programmer"]],
   [145, ["USB C Cable + Wall Adapter"]],
