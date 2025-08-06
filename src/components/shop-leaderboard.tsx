@@ -32,7 +32,7 @@ export function ShopLeaderboard({
       <CardHeader>
         <CardTitle>Shop Leaderboard</CardTitle>
         <CardDescription>
-          Approximated from prices and user spending behaviour
+          Approximated from prices and user spending behaviour. Note: The &quot;I am Rich&quot; order is actually 4 * Proxmark 3 Easy, Items bought with quantity &gt; 1 cannot be tracked accurately.
         </CardDescription>
       </CardHeader>
       <CardContent>

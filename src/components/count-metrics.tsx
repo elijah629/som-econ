@@ -141,7 +141,6 @@ export function CountMetrics({
       <CardContent className="px-2 xs:p-6">
         <ChartContainer config={chartConfig[activeChart]}>
           <ComposedChart
-            accessibilityLayer
             stackOffset="expand"
             data={chartData[activeChart]}
             margin={{
@@ -165,7 +164,9 @@ export function CountMetrics({
             />
             <ChartTooltip
               cursor={false}
-              content={(props: CustomTooltipProps) => <ChartTooltipContent {...props} indicator="dot" />}
+              content={(props: CustomTooltipProps) => (
+                <ChartTooltipContent {...props} indicator="dot" />
+              )}
             />
             <Area
               dataKey="in"

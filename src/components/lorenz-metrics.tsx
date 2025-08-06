@@ -48,7 +48,6 @@ export function LorenzMetrics({
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
-            accessibilityLayer
             data={lorenz}
             margin={{
               left: 12,
@@ -65,9 +64,12 @@ export function LorenzMetrics({
             />
             <ChartTooltip
               cursor={false}
-              content={(props: CustomTooltipProps) => <ChartTooltipContent {...props} hideLabel />}
+              content={(props: CustomTooltipProps) => (
+                <ChartTooltipContent {...props} hideLabel />
+              )}
             />
             <Line
+              isAnimationActive={false}
               dataKey="wealth"
               type="linear"
               stroke="var(--chart-2)"
@@ -75,6 +77,7 @@ export function LorenzMetrics({
               dot={false}
             />
             <Line
+              isAnimationActive={false}
               dataKey="population"
               type="linear"
               stroke="var(--chart-3)"

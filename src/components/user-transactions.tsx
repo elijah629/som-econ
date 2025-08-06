@@ -4,6 +4,7 @@ import {
   Area,
   CartesianGrid,
   ComposedChart,
+  Dot,
   Line,
   XAxis,
   YAxis,
@@ -43,8 +44,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-type NullableTx = Partial<Transaction>;
-
 const gradientOffset = (data: Transaction[]) => {
   const dataMax = Math.max(...data.map((i) => i.shellDiff));
   const dataMin = Math.min(...data.map((i) => i.shellDiff));
@@ -55,17 +54,12 @@ const gradientOffset = (data: Transaction[]) => {
   return dataMax / (dataMax - dataMin);
 };
 
-const startAtZero = (data: Transaction[]): NullableTx[] => {
-  return [...data, { shellDiff: 0, shellsBefore: 0, shellsAfter: 0 }].reverse();
-};
-
 export function UserTransactions({
   transactions,
 }: {
   transactions: Transaction[];
 }) {
   const off = gradientOffset(transactions);
-  const tx = startAtZero(transactions);
 
   return (
     <Card className="grow">
@@ -76,11 +70,9 @@ export function UserTransactions({
       <CardContent>
         <ChartContainer config={chartConfig}>
           <ComposedChart
-            accessibilityLayer
-            data={tx}
-            margin={{ left: 12, right: 12 }}
+            data={transactions}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid />
             <XAxis
               dataKey="recorded_at"
               tickLine={false}
@@ -111,6 +103,7 @@ export function UserTransactions({
             <Area
               dataKey="shellDiff"
               type="monotone"
+              isAnimationActive={false}
               fill="url(#splitColor)"
               fillOpacity={0.4}
               strokeOpacity={0}

@@ -122,9 +122,7 @@ const shellsUSD = [
   [6000, 999],
   [6250, 999],
   [8995, 1599],
-  [9245, 1599],
-  [11075, 1599],
-  [12665, 1599],
+  // [9999, 30_000], // (makes the graph all fucked up)
 ];
 
 const usdShells = shellsUSD
@@ -135,7 +133,7 @@ const a = 0.7275;
 const b = 0.8285;
 
 export function shellsToUSD(shells: number): number {
-  if (shells > 8995) {
+  if (shells > 9999) {
     return a * Math.pow(shells, b);
   }
 
@@ -163,7 +161,7 @@ export function shellsToUSD(shells: number): number {
 }
 
 export function usdToShells(usd: number): number {
-  if (usd > 1599) {
+  if (usd > 999) {
     return Math.pow(usd / a, 1 / b);
   }
 

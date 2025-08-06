@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -32,18 +32,18 @@ interface ChartDataPoint {
 }
 
 interface ZoomState {
-  data: ChartDataPoint[];
+  //data: ChartDataPoint[];
   left: string | number;
   right: string | number;
-  refAreaLeft: string | number;
-  refAreaRight: string | number;
+  //refAreaLeft: string | number;
+  //refAreaRight: string | number;
   top: string | number;
   bottom: string | number;
 }
 
-const chartData = Array.from({ length: 15000 / 5 }, (_, i) => ({
-  shells: i * 5,
-  usd: shellsToUSD(i * 5),
+const chartData = Array.from({ length: 12000 }, (_, i) => ({
+  shells: i,
+  usd: shellsToUSD(i),
 }));
 
 const chartConfig = {
@@ -78,11 +78,11 @@ const getAxisDomain = (
 };
 
 const initialState: ZoomState = {
-  data: chartData,
+  //data: chartData,
   left: "dataMin",
   right: "dataMax",
-  refAreaLeft: "",
-  refAreaRight: "",
+  //refAreaLeft: "",
+  //refAreaRight: "",
   top: "dataMax+1",
   bottom: "dataMin-1",
 };
@@ -90,73 +90,60 @@ const initialState: ZoomState = {
 export function ShellUSDChart() {
   const [state, setState] = useState<ZoomState>(initialState);
 
+  const rect = useRef<SVGRectElement>(null);
+
+  const x1 = useRef<number>(null);
+  const x2 = useRef<number>(null);
+  const i1 = useRef<number>(null);
+  const i2 = useRef<number>(null);
+
+  const update = (): void => {
+    if (!rect.current) return;
+
+    rect.current.x.baseVal.value =
+      x1.current && x2.current ? Math.min(x1.current, x2.current) : 0;
+    rect.current.width.baseVal.value =
+      x1.current && x2.current ? Math.abs(x2.current - x1.current) : 0;
+  };
+
   const zoom = (): void => {
-    let { refAreaLeft, refAreaRight } = state;
-    const { data } = state;
+    if (!(i1.current && i2.current)) return;
 
-    if (refAreaLeft === refAreaRight || refAreaRight === "") {
-      setState((prevState) => ({
-        ...prevState,
-        refAreaLeft: "",
-        refAreaRight: "",
-      }));
-      return;
-    }
+    const leftIndex = Math.min(i1.current, i2.current);
+    const rigthIndex = Math.max(i1.current, i2.current);
 
-    const leftValue = Number(refAreaLeft);
-    const rightValue = Number(refAreaRight);
-
-    if (leftValue > rightValue) {
-      [refAreaLeft, refAreaRight] = [rightValue, leftValue];
-    } else {
-      [refAreaLeft, refAreaRight] = [leftValue, rightValue];
-    }
-
-    const leftIndex = Math.max(
-      0,
-      data.findIndex((item) => item.shells >= Number(refAreaLeft)),
-    );
-    const rightIndex = Math.min(
-      data.length - 1,
-      data.findIndex((item) => item.shells >= Number(refAreaRight)),
-    );
-
-    if (leftIndex === -1 || rightIndex === -1) return;
-
-    const [bottom, top] = getAxisDomain(leftIndex, rightIndex, "usd", 0.1);
+    const [bottom, top] = getAxisDomain(leftIndex, rigthIndex, "usd", 0.1);
     const [leftDomain, rightDomain] = getAxisDomain(
       leftIndex,
-      rightIndex,
+      rigthIndex,
       "shells",
       50,
     );
 
-    setState((prevState) => ({
-      ...prevState,
-      refAreaLeft: "",
-      refAreaRight: "",
-      data: data.slice(),
+    x1.current = x2.current = i1.current = i2.current = null;
+    update();
+
+    setState({
       left: leftDomain,
       right: rightDomain,
       bottom,
       top,
-    }));
+    });
   };
 
   const zoomOut = (): void => {
-    setState((prevState) => ({
-      ...prevState,
-      data: chartData.slice(),
-      refAreaLeft: "",
-      refAreaRight: "",
+    x1.current = x2.current = i1.current = i2.current = null;
+    update();
+
+    setState({
       left: "dataMin",
       right: "dataMax",
       top: "dataMax+1",
       bottom: "dataMin-1",
-    }));
+    });
   };
 
-  const { data, refAreaLeft, refAreaRight, left, right, top, bottom } = state;
+  const { left, right, top, bottom } = state;
 
   return (
     <Card>
@@ -176,22 +163,21 @@ export function ShellUSDChart() {
         <div style={{ userSelect: "none", width: "100%" }}>
           <ChartContainer config={chartConfig}>
             <LineChart
-              accessibilityLayer
-              data={data}
+              data={chartData}
               onMouseDown={(e) => {
-                if (e?.activeLabel) {
-                  setState((prevState) => ({
-                    ...prevState,
-                    refAreaLeft: e.activeLabel!,
-                  }));
+                if (e.activeLabel) {
+                  x1.current = e.activeCoordinate!.x;
+                  i1.current = Number(e.activeLabel!);
+
+                  update();
                 }
               }}
               onMouseMove={(e) => {
-                if (state.refAreaLeft && e?.activeLabel) {
-                  setState((prevState) => ({
-                    ...prevState,
-                    refAreaRight: e.activeLabel!,
-                  }));
+                if (x1.current && e.activeLabel) {
+                  x2.current = e.activeCoordinate!.x;
+                  i2.current = Number(e.activeLabel!);
+
+                  update();
                 }
               }}
               onMouseUp={zoom}
@@ -218,7 +204,7 @@ export function ShellUSDChart() {
               />
               <ChartTooltip
                 cursor={false}
-                content={(props) =>
+                content={(props) => (
                   <ChartTooltipContent
                     {...props}
                     nameKey="usd"
@@ -236,19 +222,22 @@ export function ShellUSDChart() {
                         show="shells"
                       />
                     )}
-                    />
-                }
+                  />
+                )}
               />
-              <Line dataKey="usd" type="linear" strokeWidth={2} dot={false} />
-              {refAreaLeft && refAreaRight ? (
-                <ReferenceArea
-                  x1={refAreaLeft}
-                  x2={refAreaRight}
-                  strokeOpacity={0.3}
+              <Line dataKey="usd" isAnimationActive={false} type="linear" strokeWidth={2} dot={false} />
+              <g className="recharts-layer recharts-reference-area">
+                <rect
+                  ref={rect}
+                  x={0}
+                  y={0}
+                  width={0}
+                  height="100%"
                   fill="var(--chart-1)"
                   fillOpacity={0.1}
+                  stroke="none"
                 />
-              ) : null}
+              </g>
             </LineChart>
           </ChartContainer>
         </div>
@@ -308,7 +297,6 @@ export function ShellUSDChart() {
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
-            accessibilityLayer
             data={chartData}
             margin={{
               left: 12,
