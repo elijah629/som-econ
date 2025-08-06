@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { MonetaryValue } from "@/components/monetary-value";
 import { Currency } from "@/types/currency";
+import Link from "next/link";
 
 export function ShopLeaderboard({
   shop,
@@ -54,8 +55,10 @@ export function ShopLeaderboard({
           <TableBody>
             {shop.map(({ name, purchases, value }) => (
               <TableRow key={name}>
-                <TableCell className="whitespace-normal break-words">
-                  {name}
+                <TableCell className="whitespace-normal break-words underline">
+                  <Link href={`/purchase/${value}`}>
+                    {name}
+                  </Link>
                 </TableCell>
                 <TableCell>{purchases}</TableCell>
                 {currency === "both" ? (
