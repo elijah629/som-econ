@@ -70,7 +70,7 @@ export function UserTransactions({
       <CardContent>
         <ChartContainer config={chartConfig}>
           <ComposedChart
-            data={transactions}
+            data={transactions.reverse()}
           >
             <CartesianGrid />
             <XAxis
