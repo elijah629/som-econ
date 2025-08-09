@@ -4,7 +4,6 @@ import {
   Area,
   CartesianGrid,
   ComposedChart,
-  Dot,
   Line,
   XAxis,
   YAxis,
@@ -55,10 +54,11 @@ const gradientOffset = (data: Transaction[]) => {
 };
 
 export function UserTransactions({
-  transactions,
+  transactions: tx,
 }: {
   transactions: Transaction[];
 }) {
+  const transactions = tx.toReversed();
   const off = gradientOffset(transactions);
 
   return (
@@ -70,7 +70,7 @@ export function UserTransactions({
       <CardContent>
         <ChartContainer config={chartConfig}>
           <ComposedChart
-            data={transactions.reverse()}
+            data={transactions}
           >
             <CartesianGrid />
             <XAxis

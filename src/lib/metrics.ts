@@ -43,6 +43,7 @@ export function normalizeZero(io: IoMetrics): IoMetrics {
         ...d,
         in: 0.00001,
         out: 0.00001,
+        total: 0.00001,
       };
     }
     return d;
@@ -62,37 +63,28 @@ export function calculateMetrics(leaderboard: Leaderboard): Metrics {
 
 // Note: data must be sorted by balance high to low for this to work
 function calculateLorenz(leaderboard: Leaderboard): LorenzMetrics {
-  const lorenzMetrics = [];
-  let netIn = 0;
+  const entries = leaderboard.entries;
+  const totalWealth = entries.reduce(
+    (sum, e) => sum + Math.max(e.shells, 0),
+    0
+  );
 
-  for (let i = 0; i < leaderboard.entries.length; i++) {
-    if (leaderboard.entries[i].shells > 0) {
-      netIn += leaderboard.entries[i].shells;
-    }
-  }
+  let cumulativeWealth = 0;
+  const lorenzMetrics: LorenzMetrics = [];
 
-  let cumulativeShells = 0;
+  for (let i = entries.length - 1; i >= 0; i--) {
+    cumulativeWealth += Math.max(entries[i].shells, 0);
 
-  for (let i = 0; i < leaderboard.entries.length; i++) {
-    const user = leaderboard.entries[leaderboard.entries.length - i - 1].shells;
+    const population = ((entries.length - i) / entries.length) * 100;
+    const wealth =
+      totalWealth === 0 ? 0 : (cumulativeWealth / totalWealth) * 100;
 
-    if (user <= 0) {
-      continue;
-    }
-
-    cumulativeShells += user;
-
-    const population = ((i + 1) / leaderboard.entries.length) * 100;
-    const wealth = (cumulativeShells / netIn) * 100;
-
-    lorenzMetrics.push({
-      population,
-      wealth,
-    });
+    lorenzMetrics.push({ population, wealth });
   }
 
   return lorenzMetrics;
 }
+
 
 function calculateCounts(
   leaderboard: Leaderboard,
