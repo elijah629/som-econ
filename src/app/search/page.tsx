@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeaderboardUser } from "@/components/user-leaderboard";
-import { fuzzysearch } from "@/lib/fuzzy";
+import { fuzzysearch, levenshtein } from "@/lib/fuzzy";
 import { notFound } from "next/navigation";
 import { fetchLeaderboard } from "@/lib/parth";
 
@@ -27,10 +27,10 @@ export default async function Search({
   const leaderboard = await fetchLeaderboard();
   const totalShells = leaderboard.entries.reduce((a, b) => a + b.shells, 0);
 
-  // TODO: Use parth search
+  // Case-insensitive filter, case sensitive sort
   const matches = leaderboard.entries.filter(
     (x) => x.username && fuzzysearch(search, x.username.toLowerCase()),
-  );
+  ).map(x => ({ x, l: levenshtein(query, x.username!)})).sort((a, b) => a.l - b.l);
 
   return (
     <main className="flex flex-col gap-4">
@@ -51,7 +51,7 @@ export default async function Search({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {matches.map((user) => (
+              {matches.map(({ x: user }) => (
                 <TableRow key={user.slack_id}>
                   <LeaderboardUser
                     total={totalShells}
