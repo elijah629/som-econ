@@ -46,12 +46,10 @@ export async function fetchLeaderboard(): Promise<Leaderboard> {
 
   const raw: Leaderboard = await lb.json();
 
-  
-    return raw;
-  
+  return raw;
 
   // we need to set username using cachet for all entries without a username.
-/*
+  /*
   const filled = await Promise.all(
     raw.entries.map(async (x) => {
       if (x.username) {
@@ -145,7 +143,7 @@ export async function fetchUser(slackId: string): Promise<User> {
   const user: User = (await users.json())[0];
 
   //if (user.username || process.env.NODE_ENV === "development") {
-    return user;
+  return user;
   /*}
 
   const cachet = await fetchCachetUser(user.slack_id);

@@ -1,5 +1,10 @@
 export const PRICE_MAP = new Map<number, string[]>([
-  [9999, ["BM: NVIDIA H100 Tensor Core GPU (if this shows here, this is a bug, please DM me on slack. unless someone is crazy enough to buy this shit but wtf)"]],
+  [
+    9999,
+    [
+      "BM: NVIDIA H100 Tensor Core GPU (if this shows here, this is a bug, please DM me on slack. unless someone is crazy enough to buy this shit but wtf)",
+    ],
+  ],
   [8995, ["MacBook Pro"]],
   [6250, ["Prusa MK4S 3D Printer"]],
   [6000, ["Prusa MK4S 3D Printer"]],
@@ -166,7 +171,14 @@ export const PRICE_MAP = new Map<number, string[]>([
     ],
   ],
   [55, ["128GB USB Drive", "BM: Catears (2 pack)", "BM: Thigh Highs (2 pack)"]],
-  [50, ["$10 Server hosting credits", "Logic Analyzer", "Graphic design is my passion"]],
+  [
+    50,
+    [
+      "$10 Server hosting credits",
+      "Logic Analyzer",
+      "Graphic design is my passion",
+    ],
+  ],
   [45, ["64GB USB Drive", "Domain grant"]],
   [40, ["Summer of Making Blue"]],
   [40, ["64GB USB Drive", "Summer of Making Blue"]],

@@ -1,14 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-  ReferenceArea,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -225,7 +218,13 @@ export function ShellUSDChart() {
                   />
                 )}
               />
-              <Line dataKey="usd" isAnimationActive={false} type="linear" strokeWidth={2} dot={false} />
+              <Line
+                dataKey="usd"
+                isAnimationActive={false}
+                type="linear"
+                strokeWidth={2}
+                dot={false}
+              />
               <g className="recharts-layer recharts-reference-area">
                 <rect
                   ref={rect}

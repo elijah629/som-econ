@@ -69,9 +69,7 @@ export function UserTransactions({
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <ComposedChart
-            data={transactions}
-          >
+          <ComposedChart data={transactions}>
             <CartesianGrid />
             <XAxis
               dataKey="recorded_at"

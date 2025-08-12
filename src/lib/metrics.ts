@@ -66,7 +66,7 @@ function calculateLorenz(leaderboard: Leaderboard): LorenzMetrics {
   const entries = leaderboard.entries;
   const totalWealth = entries.reduce(
     (sum, e) => sum + Math.max(e.shells, 0),
-    0
+    0,
   );
 
   let cumulativeWealth = 0;
@@ -84,7 +84,6 @@ function calculateLorenz(leaderboard: Leaderboard): LorenzMetrics {
 
   return lorenzMetrics;
 }
-
 
 function calculateCounts(
   leaderboard: Leaderboard,

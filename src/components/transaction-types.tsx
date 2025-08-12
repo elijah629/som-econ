@@ -47,9 +47,9 @@ export function TransactionTypes({
           <PieChart>
             <ChartTooltip
               cursor={false}
-              content={(props: CustomTooltipProps) => (console.log(props),(
+              content={(props: CustomTooltipProps) => (
                 <ChartTooltipContent {...props} nameKey="type" hideLabel />
-              ))}
+              )}
             />
             <Pie
               data={transactionTypes.map((x, i) => ({

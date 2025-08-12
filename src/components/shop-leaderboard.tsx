@@ -33,7 +33,9 @@ export function ShopLeaderboard({
       <CardHeader>
         <CardTitle>Shop Leaderboard</CardTitle>
         <CardDescription>
-          Approximated from prices and user spending behaviour. Note: The &quot;I am Rich&quot; order is actually 4 * Proxmark 3 Easy, Items bought with quantity &gt; 1 cannot be tracked accurately.
+          Approximated from prices and user spending behaviour. Note: The
+          &quot;I am Rich&quot; order is actually 4 * Proxmark 3 Easy, Items
+          bought with quantity &gt; 1 cannot be tracked accurately.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -56,9 +58,7 @@ export function ShopLeaderboard({
             {shop.map(({ name, purchases, value }) => (
               <TableRow key={name}>
                 <TableCell className="whitespace-normal break-words underline">
-                  <Link href={`/purchase/${value}`}>
-                    {name}
-                  </Link>
+                  <Link href={`/purchase/${value}`}>{name}</Link>
                 </TableCell>
                 <TableCell>{purchases}</TableCell>
                 {currency === "both" ? (
